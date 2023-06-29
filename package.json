@@ -653,7 +653,7 @@
         "when": "cmake:enableFullFeatureSet",
         "title": "%cmake-tools.command.cmake.projectStatus.update.title%",
         "category": "CMake",
-        "icon": "$(refresh)"      
+        "icon": "$(refresh)"
       }
     ],
     "taskDefinitions": [
@@ -712,43 +712,43 @@
       }
     ],
     "breakpoints": [
-        {
-            "language": "cmake"
-        }
+      {
+        "language": "cmake"
+      }
     ],
     "debuggers": [
-        {
-            "type": "cmake",
-            "label": "%cmake-tools.debugger.label%",
-            "configurationAttributes": {
-                "launch": {
-                    "required": [
-                        "debuggerPipeName"
-                    ],
-                    "properties": {
-                        "debuggerPipeName": {
-                            "type": "string",
-                            "description": "Name of the named piped that the debugger will communicate with CMake over"
-                        },
-                        "cleanConfigure": {
-                            "type": "boolean",
-                            "description": "Clean prior to configuring",
-                            "default": false
-                        },
-                        "configureAll": {
-                            "type": "boolean",
-                            "description": "Define whether we configure for all projects",
-                            "default": false
-                        },
-                        "debuggerDapLog": {
-                            "type": "string",
-                            "description": "File to log dap log to",
-                            "default": ""
-                        } 
-                    }
-                }
+      {
+        "type": "cmake",
+        "label": "%cmake-tools.debugger.label%",
+        "configurationAttributes": {
+          "launch": {
+            "required": [
+              "debuggerPipeName"
+            ],
+            "properties": {
+              "debuggerPipeName": {
+                "type": "string",
+                "description": "Name of the named piped that the debugger will communicate with CMake over"
+              },
+              "cleanConfigure": {
+                "type": "boolean",
+                "description": "Clean prior to configuring",
+                "default": false
+              },
+              "configureAll": {
+                "type": "boolean",
+                "description": "Define whether we configure for all projects",
+                "default": false
+              },
+              "debuggerDapLog": {
+                "type": "string",
+                "description": "File to log dap log to",
+                "default": ""
+              }
             }
+          }
         }
+      }
     ],
     "menus": {
       "commandPalette": [
@@ -876,7 +876,7 @@
           "when": "cmake:multiProject"
         },
         {
-          "command": "cmake.cleanConfigureWithDebugger", 
+          "command": "cmake.cleanConfigureWithDebugger",
           "when": "vscode-cmake-tools.cmakeDebuggerAvailable"
         },
         {
@@ -2547,11 +2547,11 @@
     "vscode:prepublish": "yarn run compile-production",
     "compile": "yarn install && webpack --mode development",
     "compile-watch": "yarn install && webpack --mode development --watch --progress",
-    "compile-production": "yarn install && yarn run translations-generate && webpack --env BUILD_VSCODE_NLS=true --mode production",
+    "compile-production": "npm install && npm run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
     "translations-export": "gulp translations-export",
     "translations-generate": "gulp translations-generate",
     "translations-import": "gulp translations-import",
-    "package": "vsce package --yarn -o cmake-tools.vsix",
+    "package": "vsce package --no-yarn -o cmake-tools.vsix",
     "pretest": "tsc -p test.tsconfig.json",
     "lint": "gulp lint",
     "smokeTests": "yarn run pretest && node ./out/test/smoke/badProject/runTest.js && node ./out/test/smoke/goodProject/runTest.js && node ./out/test/smoke/noCtest/runTest.js",
@@ -2574,10 +2574,10 @@
     "@types/rimraf": "^3.0.0",
     "@types/sinon": "~9.0.10",
     "@types/tmp": "^0.2.0",
+    "@types/uuid": "~8.3.3",
     "@types/vscode": "1.60.0",
     "@types/which": "~2.0.0",
     "@types/xml2js": "^0.4.8",
-    "@types/uuid": "~8.3.3",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/eslint-plugin-tslint": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
@@ -2585,6 +2585,7 @@
     "chai": "^4.3.0",
     "chai-as-promised": "^7.1.1",
     "chai-string": "^1.5.0",
+    "del": "^6.0.0",
     "eslint": "^8.15.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsdoc": "^39.6.4",
@@ -2603,6 +2604,7 @@
     "module-alias": "^2.2.2",
     "node-loader": "^1.0.2",
     "parse-git-config": "^3.0.0",
+    "run-sequence": "^2.2.1",
     "sinon": "~9.2.4",
     "ts-loader": "^8.0.17",
     "ts-node": "^9.1.1",
@@ -2616,6 +2618,7 @@
     "webpack-cli": "^4.5.0"
   },
   "dependencies": {
+    "@vscode/extension-telemetry": "^0.6.2",
     "ajv": "^7.1.0",
     "chokidar": "^3.5.1",
     "handlebars": "^4.7.7",
@@ -2627,13 +2630,12 @@
     "p-limit": "^3.1.0",
     "rimraf": "^3.0.2",
     "tmp": "^0.2.1",
+    "uuid": "~8.3.2",
     "vscode-cpptools": "^6.1.0",
-    "@vscode/extension-telemetry": "^0.6.2",
-    "vscode-nls": "^5.0.0",
+    "vscode-nls": "git+https://github.com/tanji-dg/vscode-nls.git#v5.0.0",
     "vscode-tas-client": "^0.1.22",
     "which": "~2.0.2",
-    "xml2js": "^0.4.23",
-    "uuid": "~8.3.2"
+    "xml2js": "^0.4.23"
   },
   "resolutions": {
     "ansi-regex": "^5.0.1",
