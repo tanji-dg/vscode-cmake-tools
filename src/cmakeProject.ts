@@ -2292,6 +2292,26 @@ export class CMakeProject {
      * Implementation of `cmake.debugTarget`
      */
     async debugTarget(name?: string): Promise<vscode.DebugSession | null> {
+
+        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
+        if (!targetExecutable) {
+            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
+            return null;
+        }
+
+        const targetName = await this.debugSelectTarget(targetExecutable);
+        if (targetName) {
+            await vscode.debug.startDebugging(this.workspaceFolder, targetName);
+        } else {
+            const config = await this.debugTargetQuick(targetExecutable);
+            if (config) {
+                await vscode.debug.startDebugging(this.workspaceFolder, config);
+            }
+        }
+        return vscode.debug.activeDebugSession!;
+    }
+
+    async debugTargetQuick(targetExecutable: ExecutableTarget): Promise<debuggerModule.VSCodeDebugConfiguration | null> {
         const drv = await this.getCMakeDriverInstance();
         if (!drv) {
             void vscode.window.showErrorMessage(localize('set.up.and.build.project.before.debugging', 'Set up and build your CMake project before debugging.'));
@@ -2308,12 +2328,6 @@ export class CMakeProject {
                         open('https://vector-of-bool.github.io/docs/vscode-cmake-tools/debugging.html');
                     }
                 });
-            return null;
-        }
-
-        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
-        if (!targetExecutable) {
-            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
             return null;
         }
 
@@ -2370,8 +2384,34 @@ export class CMakeProject {
 
         telemetry.logEvent('debug', telemetryProperties);
 
-        await vscode.debug.startDebugging(this.workspaceFolder, debugConfig);
-        return vscode.debug.activeDebugSession!;
+        return debugConfig;
+    }
+
+    async debugSelectTarget(targetExecutable: ExecutableTarget): Promise<string | null>  {
+
+        const buildType = await this.currentBuildType();
+        log.debug('buildType ' + buildType);
+        const targetName = targetExecutable.name + "||" + buildType;
+        log.debug('targetName ' + targetName);
+
+        const launchConfig = vscode.workspace.getConfiguration('launch', this.workspaceFolder.uri);
+        if (launchConfig) {
+            const configurations = launchConfig.get<any[]>('configurations');
+            if (configurations) {
+                for (const config of configurations) {
+                    // デバッグ設定の処理
+                    log.debug(config.name);
+                    if (config.name.toString() === buildType) {
+                        log.debug('using buildType');
+                        return buildType;
+                    } else if (config.name.toString() === targetName) {
+                        log.debug('using targetName');
+                        return targetName;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private launchTerminals = new Map<number, vscode.Terminal>();

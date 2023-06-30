@@ -308,6 +308,7 @@ class BuildTargetSelectionButton extends Button {
         return this.prependCMake(this.tooltip);
     }
 }
+
 class LaunchTargetSelectionButton extends Button {
     settingsName = 'launchTarget';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
@@ -321,7 +322,23 @@ class LaunchTargetSelectionButton extends Button {
     }
 }
 
-class DebugButton extends Button {
+class AG6RControlButton extends Button {
+    private _target: string | null = null;
+
+    set target(v: string | null) {
+        this._target = v;
+        this.update();
+    }
+
+    protected getTooltipNormal(): string | null {
+        if (!!this._target) {
+            return `${this.tooltip}: [${this._target}]`;
+        }
+        return this.tooltip;
+    }
+}
+
+class DebugButton extends AG6RControlButton {
     settingsName = 'debug';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
@@ -330,26 +347,12 @@ class DebugButton extends Button {
         this.tooltip = localize('launch.debugger.tooltip', 'Launch the debugger for the selected target');
     }
 
-    private _target: string | null = null;
-
-    set target(v: string | null) {
-        this._target = v;
-        this.update();
-    }
-
-    protected getTooltipNormal(): string | null {
-        if (!!this._target) {
-            return `${this.tooltip}: [${this._target}]`;
-        }
-        return this.tooltip;
-    }
-
     protected isVisible(): boolean {
         return super.isVisible() && hasCPPTools();
     }
 }
 
-class LaunchButton extends Button {
+class LaunchButton extends AG6RControlButton {
     settingsName = 'launch';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
@@ -357,19 +360,25 @@ class LaunchButton extends Button {
         this.icon = 'play';
         this.tooltip = localize('launch.tooltip', 'Launch the selected target in the terminal window');
     }
+}
 
-    private _target: string | null = null;
-
-    set target(v: string | null) {
-        this._target = v;
-        this.update();
+class RestartButton extends AG6RControlButton {
+    settingsName = 'restart';
+    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
+        super(config, priority);
+        this.command = 'cmake.restartTarget';
+        this.icon = 'debug-restart';
+        this.tooltip = localize('restart.tooltip', 'Restart the selected target');
     }
+}
 
-    protected getTooltipNormal(): string | null {
-        if (!!this._target) {
-            return `${this.tooltip}: [${this._target}]`;
-        }
-        return this.tooltip;
+class StopButton extends AG6RControlButton {
+    settingsName = 'stop';
+    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
+        super(config, priority);
+        this.command = 'cmake.stopTarget';
+        this.icon = 'debug-stop';
+        this.tooltip = localize('stop.tooltip', 'Stop the selected target');
     }
 }
 
@@ -612,6 +621,8 @@ export class StatusBar implements vscode.Disposable {
     private readonly _debugButton: DebugButton = new DebugButton(this._config, 3.22);
     private readonly _launchButton = new LaunchButton(this._config, 3.21);
     private readonly _launchTargetNameButton = new LaunchTargetSelectionButton(this._config, 3.2);
+    private readonly _restartButton = new RestartButton(this._config, 3.21);
+    private readonly _stopButton = new StopButton(this._config, 3.21);
 
     private readonly _testPresetButton = new TestPresetSelection(this._config, 3.15);
     private readonly _testButton = new CTestButton(this._config, 3.1);
@@ -631,6 +642,8 @@ export class StatusBar implements vscode.Disposable {
             this._launchButton,
             this._configurePresetButton,
             this._buildPresetButton,
+            this._restartButton,
+            this._stopButton,
             this._testPresetButton
         ];
         this._config.onChange('statusbar', () => this.update());
@@ -669,6 +682,8 @@ export class StatusBar implements vscode.Disposable {
         this._launchTargetNameButton.text = v;
         this._launchButton.target = v;
         this._debugButton.target = v;
+        this._restartButton.target = v;
+        this._stopButton.target = v;
     }
     setCTestEnabled(v: boolean): void {
         this._testButton.enabled = v;
