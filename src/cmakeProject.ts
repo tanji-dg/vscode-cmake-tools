@@ -2396,8 +2396,12 @@ export class CMakeProject {
 
         const launchConfig = vscode.workspace.getConfiguration('launch', this.workspaceFolder.uri);
         if (launchConfig) {
-            const configurations = launchConfig.get<any[]>('configurations');
+            const configurations = launchConfig['configurations'];
             if (configurations) {
+                if (configurations.length === 1) {
+                    log.debug('using default + ' + configurations[0].name);
+                    return configurations[0].name;
+                }
                 for (const config of configurations) {
                     // デバッグ設定の処理
                     log.debug(config.name);
@@ -2463,34 +2467,40 @@ export class CMakeProject {
         return vscode.window.createTerminal(options);
     }
 
-    /**
-     * Implementation of `cmake.launchTarget`
-     */
-    async launchTarget(name?: string) {
-        const executable = await this.prepareLaunchTargetExecutable(name);
-        if (!executable) {
-            // The user has nothing selected and cancelled the prompt to select
-            // a target.
-            return null;
-        }
-
+    async executeCustomTask(name: string): Promise<vscode.Task | null> {
         const customTasks = this.workspaceContext.config.customTasks;
         if (customTasks) {
-            const launchTask = customTasks.launch;
+            const launchTask = customTasks[name];
             if (launchTask) {
                 const tasks = await vscode.tasks.fetchTasks();
                 let task;
                 for (task of tasks) {
                     if (task.name === launchTask.toString()) {
-                        break;
+                        log.debug('execute task ' + task.name);
+                        await vscode.tasks.executeTask(task);
+                        return task;
                     }
                 }
-                if (task) {
-                    log.debug('launch ' + task.name);
-                    await vscode.tasks.executeTask(task);
-                    return null;
-                }
             }
+        }
+        return null;
+    }
+
+    /**
+     * Implementation of `cmake.launchTarget`
+     */
+    async launchTarget(name?: string) {
+        const task = await this.executeCustomTask('launchTask');
+        if (!task) {
+            return null;
+
+        }
+
+        const executable = await this.prepareLaunchTargetExecutable(name);
+        if (!executable) {
+            // The user has nothing selected and cancelled the prompt to select
+            // a target.
+            return null;
         }
 
         const userConfig = this.workspaceContext.config.debugConfig;
@@ -2527,6 +2537,20 @@ export class CMakeProject {
         this.launchTerminals.set(processId!, terminal);
 
         return terminal;
+    }
+
+    /**
+     * Implementation of `cmake.restartTarget`
+     */
+    async restartTarget() {
+        await this.executeCustomTask('restartTask');
+    }
+
+    /**
+     * Implementation of `cmake.stopTarget`
+     */
+    async stopTarget() {
+        await this.executeCustomTask('stopTask');
     }
 
     /**
