@@ -322,7 +322,7 @@ class LaunchTargetSelectionButton extends Button {
     }
 }
 
-class AG6RControlButton extends Button {
+class ControlButton extends Button {
     private _target: string | null = null;
 
     set target(v: string | null) {
@@ -338,7 +338,7 @@ class AG6RControlButton extends Button {
     }
 }
 
-class DebugButton extends AG6RControlButton {
+class DebugButton extends ControlButton {
     settingsName = 'debug';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
@@ -352,7 +352,7 @@ class DebugButton extends AG6RControlButton {
     }
 }
 
-class LaunchButton extends AG6RControlButton {
+class LaunchButton extends ControlButton {
     settingsName = 'launch';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
@@ -362,7 +362,7 @@ class LaunchButton extends AG6RControlButton {
     }
 }
 
-class RestartButton extends AG6RControlButton {
+class RestartButton extends ControlButton {
     settingsName = 'restart';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
@@ -372,7 +372,7 @@ class RestartButton extends AG6RControlButton {
     }
 }
 
-class StopButton extends AG6RControlButton {
+class StopButton extends ControlButton {
     settingsName = 'stop';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
