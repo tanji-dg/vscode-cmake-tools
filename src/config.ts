@@ -146,6 +146,7 @@ export interface ExtensionConfigurationSettings {
     launchBehavior: string;
     ignoreCMakeListsMissing: boolean;
     automaticReconfigure: boolean;
+    customTasks: { [key: string]: string };
 }
 
 type EmittersOf<T> = {
@@ -463,6 +464,9 @@ export class ConfigurationReader implements vscode.Disposable {
     get automaticReconfigure(): boolean {
         return this.configData.automaticReconfigure;
     }
+    get customTasks(): {[key: string]: boolean | number | string | string[]} {
+        return this.configData.customTasks;
+    }
 
     private readonly emitters: EmittersOf<ExtensionConfigurationSettings> = {
         autoSelectActiveFolder: new vscode.EventEmitter<boolean>(),
@@ -521,7 +525,8 @@ export class ConfigurationReader implements vscode.Disposable {
         allowUnsupportedPresetsVersions: new vscode.EventEmitter<boolean>(),
         ignoreCMakeListsMissing: new vscode.EventEmitter<boolean>(),
         launchBehavior: new vscode.EventEmitter<string>(),
-        automaticReconfigure: new vscode.EventEmitter<boolean>()
+        automaticReconfigure: new vscode.EventEmitter<boolean>(),
+        customTasks: new vscode.EventEmitter<{ [key: string]: any }>()
     };
 
     /**

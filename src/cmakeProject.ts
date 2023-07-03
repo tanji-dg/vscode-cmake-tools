@@ -2387,7 +2387,7 @@ export class CMakeProject {
         return debugConfig;
     }
 
-    async debugSelectTarget(targetExecutable: ExecutableTarget): Promise<string | null>  {
+    async debugSelectTarget(targetExecutable: ExecutableTarget): Promise<string | null> {
 
         const buildType = await this.currentBuildType();
         log.debug('buildType ' + buildType);
@@ -2472,6 +2472,25 @@ export class CMakeProject {
             // The user has nothing selected and cancelled the prompt to select
             // a target.
             return null;
+        }
+
+        const customTasks = this.workspaceContext.config.customTasks;
+        if (customTasks) {
+            const launchTask = customTasks.launch;
+            if (launchTask) {
+                const tasks = await vscode.tasks.fetchTasks();
+                let task;
+                for (task of tasks) {
+                    if (task.name === launchTask.toString()) {
+                        break;
+                    }
+                }
+                if (task) {
+                    log.debug('launch ' + task.name);
+                    await vscode.tasks.executeTask(task);
+                    return null;
+                }
+            }
         }
 
         const userConfig = this.workspaceContext.config.debugConfig;
