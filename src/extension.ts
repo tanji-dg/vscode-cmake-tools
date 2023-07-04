@@ -1393,6 +1393,11 @@ export class ExtensionManager implements vscode.Disposable {
         return this.runCMakeCommand(cmakeProject => cmakeProject.debugTarget(name), folder);
     }
 
+    debugTarget2(folder?: vscode.WorkspaceFolder, name?: string): Promise<vscode.DebugSession | null> {
+        telemetry.logEvent("debug2", { all: "false" });
+        return this.runCMakeCommand(cmakeProject => cmakeProject.debugTarget2(name), folder);
+    }
+
     async debugTargetAll(): Promise<(vscode.DebugSession | null)[]> {
         telemetry.logEvent("debug", { all: "true" });
         const debugSessions: (vscode.DebugSession | null)[] = [];
@@ -1405,6 +1410,11 @@ export class ExtensionManager implements vscode.Disposable {
     launchTarget(folder?: vscode.WorkspaceFolder, name?: string): Promise<vscode.Terminal | null> {
         telemetry.logEvent("launch", { all: "false" });
         return this.runCMakeCommand(cmakeProject => cmakeProject.launchTarget(name), folder);
+    }
+
+    launchTarget2(folder?: vscode.WorkspaceFolder, name?: string) {
+        telemetry.logEvent("launch2", { all: "false" });
+        return this.runCMakeCommand(cmakeProject => cmakeProject.executeCustomTask('launch', name), folder);
     }
 
     async launchTargetAll(): Promise<(vscode.Terminal | null)[]> {
@@ -1420,14 +1430,14 @@ export class ExtensionManager implements vscode.Disposable {
         return this.runCMakeCommand(cmakeProject => cmakeProject.selectLaunchTarget(name), folder);
     }
 
-    restartTarget(folder?: vscode.WorkspaceFolder) {
+    restartTarget(folder?: vscode.WorkspaceFolder, name?: string) {
         telemetry.logEvent("restart", { command: "restartTarget" });
-        return this.runCMakeCommand(cmakeProject => cmakeProject.executeCustomTask('restart'), folder);
+        return this.runCMakeCommand(cmakeProject => cmakeProject.executeCustomTask('restart', name), folder);
     }
 
-    stopTarget(folder?: vscode.WorkspaceFolder) {
+    stopTarget(folder?: vscode.WorkspaceFolder, name?: string) {
         telemetry.logEvent("stop", { command: "stopTarget" });
-        return this.runCMakeCommand(cmakeProject => cmakeProject.executeCustomTask('stop'), folder);
+        return this.runCMakeCommand(cmakeProject => cmakeProject.executeCustomTask('stop', name), folder);
     }
 
     async resetState(folder?: vscode.WorkspaceFolder) {
@@ -1780,8 +1790,10 @@ async function setup(context: vscode.ExtensionContext, progress?: ProgressHandle
         'buildDirectory',
         'executableTargets',
         'debugTarget',
+        'debugTarget2',
         'debugTargetAll',
         'launchTarget',
+        'launchTarget2',
         'launchTargetAll',
         'selectLaunchTarget',
         'setDefaultTarget',

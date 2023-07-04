@@ -2292,26 +2292,6 @@ export class CMakeProject {
      * Implementation of `cmake.debugTarget`
      */
     async debugTarget(name?: string): Promise<vscode.DebugSession | null> {
-
-        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
-        if (!targetExecutable) {
-            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
-            return null;
-        }
-
-        const targetName = await this.debugSelectTarget(targetExecutable);
-        if (targetName) {
-            await vscode.debug.startDebugging(this.workspaceFolder, targetName);
-        } else {
-            const config = await this.debugTargetQuick(targetExecutable);
-            if (config) {
-                await vscode.debug.startDebugging(this.workspaceFolder, config);
-            }
-        }
-        return vscode.debug.activeDebugSession!;
-    }
-
-    async debugTargetQuick(targetExecutable: ExecutableTarget): Promise<debuggerModule.VSCodeDebugConfiguration | null> {
         const drv = await this.getCMakeDriverInstance();
         if (!drv) {
             void vscode.window.showErrorMessage(localize('set.up.and.build.project.before.debugging', 'Set up and build your CMake project before debugging.'));
@@ -2328,6 +2308,12 @@ export class CMakeProject {
                         open('https://vector-of-bool.github.io/docs/vscode-cmake-tools/debugging.html');
                     }
                 });
+            return null;
+        }
+
+        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
+        if (!targetExecutable) {
+            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
             return null;
         }
 
@@ -2384,38 +2370,8 @@ export class CMakeProject {
 
         telemetry.logEvent('debug', telemetryProperties);
 
-        return debugConfig;
-    }
-
-    async debugSelectTarget(targetExecutable: ExecutableTarget): Promise<string | null> {
-
-        const buildType = await this.currentBuildType();
-        log.debug('buildType ' + buildType);
-        const targetName = targetExecutable.name + "||" + buildType;
-        log.debug('targetName ' + targetName);
-
-        const launchConfig = vscode.workspace.getConfiguration('launch', this.workspaceFolder.uri);
-        if (launchConfig) {
-            const configurations = launchConfig['configurations'];
-            if (configurations) {
-                if (configurations.length === 1) {
-                    log.debug('using default + ' + configurations[0].name);
-                    return configurations[0].name;
-                }
-                for (const config of configurations) {
-                    // デバッグ設定の処理
-                    log.debug(config.name);
-                    if (config.name.toString() === buildType) {
-                        log.debug('using buildType');
-                        return buildType;
-                    } else if (config.name.toString() === targetName) {
-                        log.debug('using targetName');
-                        return targetName;
-                    }
-                }
-            }
-        }
-        return null;
+        await vscode.debug.startDebugging(this.workspaceFolder, debugConfig);
+        return vscode.debug.activeDebugSession!;
     }
 
     private launchTerminals = new Map<number, vscode.Terminal>();
@@ -2467,15 +2423,64 @@ export class CMakeProject {
         return vscode.window.createTerminal(options);
     }
 
-    async executeCustomTask(name: string): Promise<vscode.Task | null> {
+    async debugTarget2(name?: string): Promise<vscode.DebugSession | null> {
+
+        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
+        if (!targetExecutable) {
+            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
+            return null;
+        }
+
+        const targetName = await this.debugSelectTarget(targetExecutable);
+        if (targetName) {
+            buildLogger.info('using: ' + targetName);
+            await vscode.debug.startDebugging(this.workspaceFolder, targetName);
+        }
+        return vscode.debug.activeDebugSession!;
+    }
+
+    async debugSelectTarget(targetExecutable: ExecutableTarget): Promise<string | null> {
+
+        const buildType = await this.currentBuildType();
+        const targetName = targetExecutable.name + "||" + buildType;
+        buildLogger.info('targetName: ' + targetName);
+
+        const launchConfig = vscode.workspace.getConfiguration('launch', this.workspaceFolder.uri);
+        if (launchConfig) {
+            const configurations = launchConfig['configurations'];
+            if (configurations) {
+                if (configurations.length === 1) {
+                    return configurations[0].name;
+                }
+                for (const config of configurations) {
+                    // デバッグ設定の処理
+                    if (config.name.toString() === buildType) {
+                        return buildType;
+                    } else if (config.name.toString() === targetName) {
+                        return targetName;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    async executeCustomTask(taskName: string, name?: string): Promise<vscode.Task | null> {
+
+        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
+        if (!targetExecutable) {
+            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
+            return null;
+        }
+
         const customTasks = this.workspaceContext.config.customTasks;
         if (customTasks) {
-            const launchTask = customTasks[name];
-            if (launchTask) {
+            const customTaskName = customTasks[taskName];
+            if (customTaskName) {
                 const tasks = await vscode.tasks.fetchTasks();
                 let task;
                 for (task of tasks) {
-                    if (task.name === launchTask.toString()) {
+                    if (task.name === customTaskName.toString()) {
                         log.debug('execute task ' + task.name);
                         await vscode.tasks.executeTask(task);
                         return task;
@@ -2490,12 +2495,6 @@ export class CMakeProject {
      * Implementation of `cmake.launchTarget`
      */
     async launchTarget(name?: string) {
-        const task = await this.executeCustomTask('launchTask');
-        if (!task) {
-            return null;
-
-        }
-
         const executable = await this.prepareLaunchTargetExecutable(name);
         if (!executable) {
             // The user has nothing selected and cancelled the prompt to select
@@ -2537,20 +2536,6 @@ export class CMakeProject {
         this.launchTerminals.set(processId!, terminal);
 
         return terminal;
-    }
-
-    /**
-     * Implementation of `cmake.restartTarget`
-     */
-    async restartTarget() {
-        await this.executeCustomTask('restartTask');
-    }
-
-    /**
-     * Implementation of `cmake.stopTarget`
-     */
-    async stopTarget() {
-        await this.executeCustomTask('stopTask');
     }
 
     /**

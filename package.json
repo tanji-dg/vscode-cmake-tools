@@ -1,6 +1,6 @@
 {
-  "name": "cmake-tools",
-  "displayName": "CMake Tools",
+  "name": "cmake-tools-dg",
+  "displayName": "CMake Tools for Daitogiken",
   "description": "Extended CMake support in Visual Studio Code",
   "version": "1.13.0",
   "publisher": "ms-vscode",
@@ -50,6 +50,7 @@
     "onCommand:cmake.buildKit",
     "onCommand:cmake.tasksBuildCommand",
     "workspaceContains:CMakeLists.txt",
+    "workspaceContains:CMakePresets.json",
     "workspaceContains:*/CMakeLists.txt",
     "workspaceContains:*/*/CMakeLists.txt",
     "workspaceContains:*/*/*/CMakeLists.txt",
@@ -538,6 +539,12 @@
         "category": "CMake"
       },
       {
+        "command": "cmake.debugTarget2",
+        "title": "%cmake-tools.command.cmake.debugTarget.title%",
+        "when": "cmake:enableFullFeatureSet",
+        "category": "CMake"
+      },
+      {
         "command": "cmake.outline.debugTarget",
         "when": "cmake:enableFullFeatureSet",
         "title": "%cmake-tools.command.cmake.outline.debugTarget.title%"
@@ -563,6 +570,12 @@
       },
       {
         "command": "cmake.launchTarget",
+        "title": "%cmake-tools.command.cmake.launchTarget.title%",
+        "when": "cmake:enableFullFeatureSet",
+        "category": "CMake"
+      },
+      {
+        "command": "cmake.launchTarget2",
         "title": "%cmake-tools.command.cmake.launchTarget.title%",
         "when": "cmake:enableFullFeatureSet",
         "category": "CMake"
@@ -929,6 +942,10 @@
         },
         {
           "command": "cmake.debugTarget",
+          "when": "!cmake:hideDebugCommand && cmake:enableFullFeatureSet"
+        },
+        {
+          "command": "cmake.debugTarget2",
           "when": "!cmake:hideDebugCommand && cmake:enableFullFeatureSet"
         },
         {
@@ -2545,13 +2562,14 @@
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile-production",
-    "compile": "yarn install && webpack --mode development",
-    "compile-watch": "yarn install && webpack --mode development --watch --progress",
+    "compile": "npm install && webpack --mode development",
+    "compile-watch": "npm install && webpack --mode development --watch --progress",
+    "compile-watch-fast": "webpack --mode development --watch --progress",
     "compile-production": "npm install && npm run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
     "translations-export": "gulp translations-export",
     "translations-generate": "gulp translations-generate",
     "translations-import": "gulp translations-import",
-    "package": "vsce package --no-yarn -o cmake-tools.vsix",
+    "package": "vsce package --no-yarn -o cmake-tools-dg.vsix",
     "pretest": "tsc -p test.tsconfig.json",
     "lint": "gulp lint",
     "smokeTests": "yarn run pretest && node ./out/test/smoke/badProject/runTest.js && node ./out/test/smoke/goodProject/runTest.js && node ./out/test/smoke/noCtest/runTest.js",
