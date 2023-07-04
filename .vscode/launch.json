@@ -17,7 +17,7 @@
             "env": {
                 "CMT_DEVRUN": "1"
             },
-            //"preLaunchTask": "build-with-webpack-watch",
+            "preLaunchTask": "build-with-webpack-watch",
             "smartStep": false
         },
         {

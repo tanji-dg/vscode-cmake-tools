@@ -464,7 +464,7 @@ export class ConfigurationReader implements vscode.Disposable {
     get automaticReconfigure(): boolean {
         return this.configData.automaticReconfigure;
     }
-    get customTasks(): {[key: string]: boolean | number | string | string[]} {
+    get customTasks(): {[key: string]: string} {
         return this.configData.customTasks;
     }
 
