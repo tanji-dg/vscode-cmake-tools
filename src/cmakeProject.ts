@@ -2425,9 +2425,8 @@ export class CMakeProject {
 
     async debugTarget2(name?: string): Promise<vscode.DebugSession | null> {
 
-        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
+        const targetExecutable = await this.executeCustomTask("debug", name);
         if (!targetExecutable) {
-            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
             return null;
         }
 
@@ -2443,52 +2442,60 @@ export class CMakeProject {
 
         const buildType = await this.currentBuildType();
         const targetName = targetExecutable.name + "||" + buildType;
-        buildLogger.info('targetName: ' + targetName);
+        buildLogger.info('targetName: ' + targetName + ' buildType: ' + buildType);
 
         const launchConfig = vscode.workspace.getConfiguration('launch', this.workspaceFolder.uri);
         if (launchConfig) {
             const configurations = launchConfig['configurations'];
             if (configurations) {
-                if (configurations.length === 1) {
-                    return configurations[0].name;
-                }
                 for (const config of configurations) {
                     // デバッグ設定の処理
-                    if (config.name.toString() === buildType) {
-                        return buildType;
-                    } else if (config.name.toString() === targetName) {
-                        return targetName;
+                    if (config.name.toString().includes(targetName) ||
+                        config.name.toString().includes(buildType)) {
+                        return config.name;
                     }
+                }
+                if (configurations.length >= 1) {
+                    return configurations[0].name;
                 }
             }
         }
+        void vscode.window.showErrorMessage(localize('no.launch.config', 'Launch config not found.'));
         return null;
     }
 
-    async executeCustomTask(taskName: string, name?: string): Promise<vscode.Task | null> {
-
-        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
-        if (!targetExecutable) {
-            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
-            return null;
-        }
+    async executeCustomTask(taskName: string, name?: string): Promise<ExecutableTarget | null> {
 
         const customTasks = this.workspaceContext.config.customTasks;
         if (customTasks) {
             const customTaskName = customTasks[taskName];
             if (customTaskName) {
-                const tasks = await vscode.tasks.fetchTasks();
-                let task;
-                for (task of tasks) {
-                    if (task.name === customTaskName.toString()) {
-                        log.debug('execute task ' + task.name);
-                        await vscode.tasks.executeTask(task);
-                        return task;
+                const result = await Promise.all([
+                    this.prepareLaunchTargetExecutable(name),
+                    vscode.tasks.fetchTasks()
+                ]).then(([targetExecutable, tasks]) => {
+                    if (!targetExecutable) {
+                        log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
+                        return null;
                     }
+                    let task;
+                    for (task of tasks) {
+                        if (task.name === customTaskName.toString()) {
+                            log.debug('execute task ' + task.name);
+                            return [ targetExecutable, vscode.tasks.executeTask(task) ];
+                        }
+                    }
+                    void vscode.window.showErrorMessage(localize('no.custom.task', 'Task not found: {0}', customTaskName.toString()));
+                    return [ targetExecutable, null ];
+                });
+                if (!result) {
+                    return null;
                 }
+                return result[0] as ExecutableTarget;
             }
         }
-        return null;
+        const result = await this.prepareLaunchTargetExecutable(name);
+        return result;
     }
 
     /**
