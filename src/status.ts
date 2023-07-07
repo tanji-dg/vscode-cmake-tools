@@ -342,7 +342,7 @@ class DebugButton extends ControlButton {
     settingsName = 'debug';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
-        this.command = 'cmake.debugTarget2';
+        this.command = 'cmake.debugTarget';
         this.icon = 'bug';
         this.tooltip = localize('launch.debugger.tooltip', 'Launch the debugger for the selected target');
     }
