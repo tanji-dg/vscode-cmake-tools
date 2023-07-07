@@ -183,5 +183,7 @@
 	"cmake-tools.configuration.cmake.loadCompileCommands.description": "拡張子が単一ファイルのコンパイルを有効にするために compile_commands.json を読み取るかどうかを制御します。",
 	"cmake-tools.command.cmake.projectStatus.update.title": "プロジェクトの状態を最新の情報に更新",
 	"cmake-tools.command.cmake.projectStatus.selectTestPreset.title": "テストの対象の設定",
-	"cmake-tools.debugger.label": "CMake デバッガー"
+	"cmake-tools.debugger.label": "CMake デバッガー",
+	"cmake-tools.configuration.cmake.customTasks.description": "cmakeの動作に併せて実行されるタスクを指定します。",
+	"cmake-tools.configuration.cmake.debugConfigName.description": "指定した名称の構成でデバッグします。"
 }

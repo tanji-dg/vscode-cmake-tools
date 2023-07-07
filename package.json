@@ -539,12 +539,6 @@
         "category": "CMake"
       },
       {
-        "command": "cmake.debugTarget2",
-        "title": "%cmake-tools.command.cmake.debugTarget.title%",
-        "when": "cmake:enableFullFeatureSet",
-        "category": "CMake"
-      },
-      {
         "command": "cmake.outline.debugTarget",
         "when": "cmake:enableFullFeatureSet",
         "title": "%cmake-tools.command.cmake.outline.debugTarget.title%"
@@ -942,10 +936,6 @@
         },
         {
           "command": "cmake.debugTarget",
-          "when": "!cmake:hideDebugCommand && cmake:enableFullFeatureSet"
-        },
-        {
-          "command": "cmake.debugTarget2",
           "when": "!cmake:hideDebugCommand && cmake:enableFullFeatureSet"
         },
         {
@@ -2478,6 +2468,64 @@
           "default": true,
           "description": "%cmake-tools.configuration.cmake.automaticReconfigure.description%",
           "scope": "resource"
+        },
+        "cmake.customTasks": {
+          "type": "object",
+          "properties": {
+            "launch": {
+              "type": "object",
+              "properties": {
+                "preBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
+                },
+                "postBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.postBuild.description%"
+                }
+              },
+              "description": "%cmake-tools.configuration.cmake.customTasks.launch.debug.description%"
+            },
+            "debug": {
+              "type": "object",
+              "properties": {
+                "preBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
+                },
+                "postBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.postBuild.description%"
+                }
+              },
+              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.debug.description%"
+            },
+            "restart": {
+              "type": "object",
+              "properties": {
+                "preBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
+                },
+                "postBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.postBuild.description%"
+                }
+              },
+              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.restart.description%"
+            },
+            "stop": {
+              "type": "string",
+              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.stop.description%"
+            }
+          },
+          "description": "%cmake-tools.configuration.cmake.customTasks.description%",
+          "scope": "resource"
+        },
+        "cmake.debugConfigName": {
+          "type": "string",
+          "description": "%cmake-tools.configuration.cmake.debugConfigName.description%",
+          "scope": "resource"
         }
       }
     },
@@ -2561,11 +2609,12 @@
     "@test": "out/test/"
   },
   "scripts": {
-    "vscode:prepublish": "yarn run compile-production",
+    "vscode:prepublish": "npm run compile-production",
     "compile": "npm install && webpack --mode development",
     "compile-watch": "npm install && webpack --mode development --watch --progress",
     "compile-watch-fast": "webpack --mode development --watch --progress",
     "compile-production": "npm install && npm run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
+    "compile-production-fast": "npm run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
     "translations-export": "gulp translations-export",
     "translations-generate": "gulp translations-generate",
     "translations-import": "gulp translations-import",

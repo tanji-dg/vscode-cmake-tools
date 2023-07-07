@@ -67,7 +67,8 @@ function createConfig(conf: Partial<ExtensionConfigurationSettings>): Configurat
         launchBehavior: 'reuseTerminal',
         ignoreCMakeListsMissing: false,
         automaticReconfigure: false,
-        customTasks: {}
+        customTasks: {},
+        debugConfigName: null
     });
     ret.updatePartial(conf);
     return ret;

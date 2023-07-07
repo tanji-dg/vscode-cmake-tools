@@ -2311,10 +2311,17 @@ export class CMakeProject {
             return null;
         }
 
-        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
+        const targetExecutable = await this.executeCustomTaskWithBuild("debug", name);
         if (!targetExecutable) {
-            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
             return null;
+        }
+
+        const debugConfigName = this.workspaceContext.config.debugConfigName;
+        if (debugConfigName) {
+            const result = await expandStrings([ debugConfigName ], await this.getExpansionOptions());
+            log.debug(localize('debug.configuration.debugConfigName', 'Debug configuration: {0} {1}', debugConfigName, result[0]));
+            await vscode.debug.startDebugging(this.workspaceFolder, result[0]);
+            return vscode.debug.activeDebugSession!;
         }
 
         let debugConfig;
@@ -2423,79 +2430,59 @@ export class CMakeProject {
         return vscode.window.createTerminal(options);
     }
 
-    async debugTarget2(name?: string): Promise<vscode.DebugSession | null> {
+    async executeTask(tasks: vscode.Task[], taskName: string, taskAt: string, buildType: string) {
+        for (const task of tasks) {
+            if (task.name === taskName) {
+                log.info(localize('executing.task', 'Executing {0} task {1} on {2}', taskAt, taskName, buildType));
+                await vscode.tasks.executeTask(task);
+            }
+        }
+    }
 
-        const targetExecutable = await this.executeCustomTask("debug", name);
+    async executeCustomTaskWithBuild(taskAt: string, name?: string): Promise<ExecutableTarget | null> {
+
+        const customTasks = this.workspaceContext.config.customTasks;
+        let tasks;
+        let customTask;
+        if (customTasks) {
+            customTask = customTasks[taskAt];
+            tasks = await vscode.tasks.fetchTasks();
+            if (customTask instanceof Object && customTask.preBuild) {
+                await this.executeTask(tasks, customTask.preBuild.toString(), taskAt, "preBuild");
+            }
+        }
+
+        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
         if (!targetExecutable) {
+            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
             return null;
         }
 
-        const targetName = await this.debugSelectTarget(targetExecutable);
-        if (targetName) {
-            buildLogger.info('using: ' + targetName);
-            await vscode.debug.startDebugging(this.workspaceFolder, targetName);
+        if (tasks && customTask instanceof Object && customTask.postBuild) {
+            await this.executeTask(tasks, customTask.postBuild.toString(), taskAt, "postBuild");
         }
-        return vscode.debug.activeDebugSession!;
+
+        return targetExecutable;
     }
 
-    async debugSelectTarget(targetExecutable: ExecutableTarget): Promise<string | null> {
-
-        const buildType = await this.currentBuildType();
-        const targetName = targetExecutable.name + "||" + buildType;
-        buildLogger.info('targetName: ' + targetName + ' buildType: ' + buildType);
-
-        const launchConfig = vscode.workspace.getConfiguration('launch', this.workspaceFolder.uri);
-        if (launchConfig) {
-            const configurations = launchConfig['configurations'];
-            if (configurations) {
-                for (const config of configurations) {
-                    // デバッグ設定の処理
-                    if (config.name.toString().includes(targetName) ||
-                        config.name.toString().includes(buildType)) {
-                        return config.name;
-                    }
-                }
-                if (configurations.length >= 1) {
-                    return configurations[0].name;
-                }
-            }
-        }
-        void vscode.window.showErrorMessage(localize('no.launch.config', 'Launch config not found.'));
-        return null;
-    }
-
-    async executeCustomTask(taskName: string, name?: string): Promise<ExecutableTarget | null> {
+    async executeCustomTask(taskName: string): Promise<Thenable<vscode.TaskExecution> |null> {
 
         const customTasks = this.workspaceContext.config.customTasks;
         if (customTasks) {
             const customTaskName = customTasks[taskName];
-            if (customTaskName) {
-                const result = await Promise.all([
-                    this.prepareLaunchTargetExecutable(name),
-                    vscode.tasks.fetchTasks()
-                ]).then(([targetExecutable, tasks]) => {
-                    if (!targetExecutable) {
-                        log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
-                        return null;
+            if (typeof customTaskName === "string") {
+                const tasks = await vscode.tasks.fetchTasks();
+                for (const task of tasks) {
+                    if (task.name === customTaskName.toString()) {
+                        log.info(localize('executing.task.with.build', 'Executing task {0} on {1}', customTaskName.toString(), taskName));
+                        return vscode.tasks.executeTask(task);
                     }
-                    let task;
-                    for (task of tasks) {
-                        if (task.name === customTaskName.toString()) {
-                            log.debug('execute task ' + task.name);
-                            return [ targetExecutable, vscode.tasks.executeTask(task) ];
-                        }
-                    }
-                    void vscode.window.showErrorMessage(localize('no.custom.task', 'Task not found: {0}', customTaskName.toString()));
-                    return [ targetExecutable, null ];
-                });
-                if (!result) {
-                    return null;
                 }
-                return result[0] as ExecutableTarget;
+                void vscode.window.showErrorMessage(localize('no.custom.task', 'Task not found: {0}', customTaskName.toString()));
+                return null;
             }
         }
-        const result = await this.prepareLaunchTargetExecutable(name);
-        return result;
+        return null;
     }
 
     /**
