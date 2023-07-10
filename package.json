@@ -2500,20 +2500,6 @@
               },
               "description": "%cmake-tools.configuration.cmake.customTasks.tasks.debug.description%"
             },
-            "restart": {
-              "type": "object",
-              "properties": {
-                "preBuild": {
-                  "type": "string",
-                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
-                },
-                "postBuild": {
-                  "type": "string",
-                  "description": "%cmake-tools.configuration.cmake.customTasks.postBuild.description%"
-                }
-              },
-              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.restart.description%"
-            },
             "stop": {
               "type": "string",
               "description": "%cmake-tools.configuration.cmake.customTasks.tasks.stop.description%"
