@@ -2446,10 +2446,13 @@ export class CMakeProject {
         let customTask;
         if (customTasks) {
             customTask = customTasks[taskAt];
+            buildLogger.info(localize('execute.custom.tasks.with.build', 'Executing custom tasks with build: {0}', taskAt));
             tasks = await vscode.tasks.fetchTasks();
             if (customTask instanceof Object && customTask.preBuild) {
                 await this.executeTask(tasks, customTask.preBuild.toString(), taskAt, "preBuild");
             }
+        } else {
+            buildLogger.info(localize('no.custom.tasks', 'No custom tasks'));
         }
 
         const targetExecutable = await this.prepareLaunchTargetExecutable(name);
