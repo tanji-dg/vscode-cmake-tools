@@ -1425,11 +1425,6 @@ export class ExtensionManager implements vscode.Disposable {
         return this.runCMakeCommand(cmakeProject => cmakeProject.selectLaunchTarget(name), folder);
     }
 
-    restartTarget(folder?: vscode.WorkspaceFolder, name?: string) {
-        telemetry.logEvent("restart", { command: "restartTarget" });
-        return this.runCMakeCommand(cmakeProject => cmakeProject.executeCustomTaskWithBuild('restart', name), folder);
-    }
-
     stopTarget(folder?: vscode.WorkspaceFolder) {
         telemetry.logEvent("stop", { command: "stopTarget" });
         return this.runCMakeCommand(cmakeProject => cmakeProject.executeCustomTask('stop'), folder);
@@ -1791,7 +1786,6 @@ async function setup(context: vscode.ExtensionContext, progress?: ProgressHandle
         'launchTargetAll',
         'selectLaunchTarget',
         'setDefaultTarget',
-        'restartTarget',
         'stopTarget',
         'resetState',
         'viewLog',

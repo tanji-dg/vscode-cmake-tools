@@ -362,16 +362,6 @@ class LaunchButton extends ControlButton {
     }
 }
 
-class RestartButton extends ControlButton {
-    settingsName = 'restart';
-    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
-        super(config, priority);
-        this.command = 'cmake.restartTarget';
-        this.icon = 'debug-restart';
-        this.tooltip = localize('restart.tooltip', 'Restart the selected target');
-    }
-}
-
 class StopButton extends ControlButton {
     settingsName = 'stop';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
@@ -621,7 +611,6 @@ export class StatusBar implements vscode.Disposable {
     private readonly _debugButton: DebugButton = new DebugButton(this._config, 3.22);
     private readonly _launchButton = new LaunchButton(this._config, 3.21);
     private readonly _launchTargetNameButton = new LaunchTargetSelectionButton(this._config, 3.2);
-    private readonly _restartButton = new RestartButton(this._config, 3.21);
     private readonly _stopButton = new StopButton(this._config, 3.21);
 
     private readonly _testPresetButton = new TestPresetSelection(this._config, 3.15);
@@ -642,7 +631,6 @@ export class StatusBar implements vscode.Disposable {
             this._launchButton,
             this._configurePresetButton,
             this._buildPresetButton,
-            this._restartButton,
             this._stopButton,
             this._testPresetButton
         ];
@@ -682,7 +670,6 @@ export class StatusBar implements vscode.Disposable {
         this._launchTargetNameButton.text = v;
         this._launchButton.target = v;
         this._debugButton.target = v;
-        this._restartButton.target = v;
         this._stopButton.target = v;
     }
     setCTestEnabled(v: boolean): void {
