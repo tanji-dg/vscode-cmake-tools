@@ -2492,10 +2492,16 @@ export class CMakeProject {
      * Implementation of `cmake.launchTarget`
      */
     async launchTarget(name?: string) {
-        const executable = await this.prepareLaunchTargetExecutable(name);
+
+        const executable = await this.executeCustomTaskWithBuild('launch', name);
         if (!executable) {
             // The user has nothing selected and cancelled the prompt to select
             // a target.
+            return null;
+        }
+
+        const customTasks = this.workspaceContext.config.customTasks;
+        if (customTasks?.launch) {
             return null;
         }
 
