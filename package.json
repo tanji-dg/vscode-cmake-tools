@@ -569,12 +569,6 @@
         "category": "CMake"
       },
       {
-        "command": "cmake.launchTarget2",
-        "title": "%cmake-tools.command.cmake.launchTarget.title%",
-        "when": "cmake:enableFullFeatureSet",
-        "category": "CMake"
-      },
-      {
         "command": "cmake.outline.launchTarget",
         "when": "cmake:enableFullFeatureSet",
         "title": "%cmake-tools.command.cmake.outline.launchTarget.title%"

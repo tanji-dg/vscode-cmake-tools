@@ -356,9 +356,9 @@ class LaunchButton extends ControlButton {
     settingsName = 'launch';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
-        this.command = 'cmake.launchTarget2';
+        this.command = 'cmake.launchTarget';
         this.icon = 'play';
-        this.tooltip = localize('launch2.tooltip', 'Launch the selected target');
+        this.tooltip = localize('launch.tooltip', 'Launch the selected target');
     }
 }
 
