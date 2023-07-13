@@ -2,7 +2,7 @@
   "name": "cmake-tools-dg",
   "displayName": "CMake Tools for Daitogiken",
   "description": "Extended CMake support in Visual Studio Code",
-  "version": "1.13.0",
+  "version": "1.0.0",
   "publisher": "ms-vscode",
   "repository": {
     "type": "git",

@@ -65,7 +65,7 @@
 	"cmake-tools.command.cmake.selectActiveFolder.title": "アクティブなフォルダーの選択",
 	"cmake-tools.command.cmake.outline.runUtilityTarget.title": "ユーティリティの実行",
 	"cmake-tools.command.cmake.outline.debugTarget.title": "デバッグ",
-	"cmake-tools.command.cmake.outline.launchTarget.title": "ターミナルで実行する",
+	"cmake-tools.command.cmake.outline.launchTarget.title": "実行",
 	"cmake-tools.command.cmake.outline.setDefaultTarget.title": "ビルド ターゲットとして設定",
 	"cmake-tools.command.cmake.outline.setLaunchTarget.title": "起動またはデバッグ ターゲットとして設定",
 	"cmake-tools.command.cmake.outline.revealInCMakeLists.title": "CMakeLists.txt を開く",
