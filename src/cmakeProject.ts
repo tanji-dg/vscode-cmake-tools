@@ -2029,6 +2029,11 @@ export class CMakeProject {
         return this.setLaunchTargetByName(name);
     }
 
+    appTarget: ExecutableTarget = {
+        name: localize("app.name", "Application"),
+        path: localize("app.path", "Default application on target.")
+    };
+
     /**
      * Used by vscode and as test interface
      */
@@ -2039,7 +2044,10 @@ export class CMakeProject {
                 return null;
             }
         }
-        const executableTargets = await this.executableTargets;
+        const executableTargets: ExecutableTarget[] = [];
+        executableTargets.push(this.appTarget);
+        const targets = await this.executableTargets;
+        executableTargets.push(...targets);
         if (executableTargets.length === 0) {
             return null;
         } if (executableTargets.length === 1) {
@@ -2121,6 +2129,11 @@ export class CMakeProject {
      * Implementation of `cmake.getLaunchTargetPath`. This does not ensure the target exists.
      */
     async getLaunchTargetPath(): Promise<string | null> {
+        const targetName = this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder);
+        if (targetName ===  this.appTarget.name) {
+            return targetName;
+        }
+
         if (await this.needsReconfigure()) {
             const rc = await this.configureInternal(ConfigureTrigger.launch, [], ConfigureType.Normal);
             if (rc !== 0) {
@@ -2220,6 +2233,11 @@ export class CMakeProject {
 
     async prepareLaunchTargetExecutable(name?: string): Promise<ExecutableTarget | null> {
         let chosen: ExecutableTarget;
+
+        const targetName = this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder);
+        if (targetName === this.appTarget.name) {
+            return this.appTarget;
+        }
 
         // Ensure that we've configured the project already. If we haven't, `getOrSelectLaunchTarget` won't see any
         // executable targets and may show an uneccessary prompt to the user
