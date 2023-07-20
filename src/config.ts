@@ -148,6 +148,7 @@ export interface ExtensionConfigurationSettings {
     automaticReconfigure: boolean;
     customTasks: { [key: string]: string | { [key: string]: {[key: string]: string} } };
     debugConfigName: string | null;
+    defaultLaunchTarget: string | null;
 }
 
 type EmittersOf<T> = {
@@ -465,12 +466,17 @@ export class ConfigurationReader implements vscode.Disposable {
     get automaticReconfigure(): boolean {
         return this.configData.automaticReconfigure;
     }
+
     get customTasks(): {[key: string]: string | {[key: string]: {[key: string]: string}}} {
         return this.configData.customTasks;
     }
 
     get debugConfigName(): string | null {
         return this.configData.debugConfigName;
+    }
+
+    get defaultLaunchTarget(): string | null {
+        return this.configData.defaultLaunchTarget;
     }
 
     private readonly emitters: EmittersOf<ExtensionConfigurationSettings> = {
@@ -532,7 +538,8 @@ export class ConfigurationReader implements vscode.Disposable {
         launchBehavior: new vscode.EventEmitter<string>(),
         automaticReconfigure: new vscode.EventEmitter<boolean>(),
         customTasks: new vscode.EventEmitter<{ [key: string]: string | { [key: string]: { [key: string]: string} }}>(),
-        debugConfigName: new vscode.EventEmitter<string>()
+        debugConfigName: new vscode.EventEmitter<string>(),
+        defaultLaunchTarget: new vscode.EventEmitter<string>()
     };
 
     /**

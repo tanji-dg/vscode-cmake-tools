@@ -68,7 +68,8 @@ function createConfig(conf: Partial<ExtensionConfigurationSettings>): Configurat
         ignoreCMakeListsMissing: false,
         automaticReconfigure: false,
         customTasks: {},
-        debugConfigName: null
+        debugConfigName: null,
+        defaultLaunchTarget: null
     });
     ret.updatePartial(conf);
     return ret;
