@@ -2506,6 +2506,11 @@
           "type": "string",
           "description": "%cmake-tools.configuration.cmake.debugConfigName.description%",
           "scope": "resource"
+        },
+        "cmake.defaultLaunchTarget": {
+          "type": "string",
+          "description": "%cmake-tools.configuration.cmake.defaultLaunchTarget.description%",
+          "scope": "resource"
         }
       }
     },
@@ -2598,7 +2603,7 @@
     "translations-export": "gulp translations-export",
     "translations-generate": "gulp translations-generate",
     "translations-import": "gulp translations-import",
-    "package": "vsce package --no-yarn -o cmake-tools-dg.vsix",
+    "package": "vsce package --no-yarn",
     "pretest": "tsc -p test.tsconfig.json",
     "lint": "gulp lint",
     "smokeTests": "yarn run pretest && node ./out/test/smoke/badProject/runTest.js && node ./out/test/smoke/goodProject/runTest.js && node ./out/test/smoke/noCtest/runTest.js",

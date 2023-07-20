@@ -911,7 +911,8 @@ export class CMakeProject {
         // Set the status bar message
         this.activeVariant.set(this.variantManager.activeVariantOptions.short);
         // Restore the debug target
-        this._launchTargetName.set(this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder) || '');
+        const defaultLaunchTarget = this.workspaceContext.config.defaultLaunchTarget || '';
+        this._launchTargetName.set(this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder) || defaultLaunchTarget);
 
         // Hook up event handlers
         // Listen for the variant to change
