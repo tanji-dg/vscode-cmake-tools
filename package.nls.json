@@ -218,5 +218,8 @@
     "cmake-tools.configuration.cmake.loadCompileCommands.description": "Controls whether the extension reads compile_commands.json to enable single file compilation.",
     "cmake-tools.command.cmake.projectStatus.update.title": "Refresh the project status",
     "cmake-tools.command.cmake.projectStatus.selectTestPreset.title": "Set test target",
-    "cmake-tools.debugger.label": "CMake Debugger"
+    "cmake-tools.debugger.label": "CMake Debugger",
+	"cmake-tools.configuration.cmake.customTasks.description": "%cmake-tools.configuration.cmake.customTasks.description%",
+	"cmake-tools.configuration.cmake.debugConfigName.description": "%cmake-tools.configuration.cmake.debugConfigName.description%",
+	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "%cmake-tools.configuration.cmake.defaultLaunchTarget.description%"
 }
