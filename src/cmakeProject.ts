@@ -2234,12 +2234,7 @@ export class CMakeProject {
     }
 
     async prepareLaunchTargetExecutable(name?: string): Promise<ExecutableTarget | null> {
-        let chosen: ExecutableTarget;
-
-        const targetName = this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder);
-        if (targetName === this.appTarget.name) {
-            return this.appTarget;
-        }
+        let chosen: ExecutableTarget | null = null;
 
         // Ensure that we've configured the project already. If we haven't, `getOrSelectLaunchTarget` won't see any
         // executable targets and may show an uneccessary prompt to the user
@@ -2259,18 +2254,23 @@ export class CMakeProject {
             }
             chosen = found;
         } else {
-            const current = await this.getOrSelectLaunchTarget();
-            if (!current) {
-                return null;
+            const targetName = this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder);
+            if (targetName === this.appTarget.name) {
+                chosen = this.appTarget;
+            } else {
+                const current = await this.getOrSelectLaunchTarget();
+                if (!current) {
+                    return null;
+                }
+                chosen = current;
             }
-            chosen = current;
         }
 
         const buildOnLaunch = this.workspaceContext.config.buildBeforeRun;
         if (buildOnLaunch || isReconfigurationNeeded) {
             const buildTargets = await this.getDefaultBuildTargets() || [];
             const allTargetName = await this.allTargetName;
-            if (!buildTargets.includes(allTargetName) && !buildTargets.includes(chosen.name)) {
+            if (chosen && chosen.name !== this.appTarget.name && !buildTargets.includes(allTargetName) && !buildTargets.includes(chosen.name)) {
                 buildTargets.push(chosen.name);
             }
 
@@ -2477,6 +2477,9 @@ export class CMakeProject {
 
         const targetExecutable = await this.prepareLaunchTargetExecutable(name);
         if (!targetExecutable) {
+            if (!name) {
+                name = this.targetName.value;
+            }
             log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
             return null;
         }
