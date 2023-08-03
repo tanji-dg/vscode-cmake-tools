@@ -2,7 +2,7 @@
   "name": "cmake-tools-dg",
   "displayName": "CMake Tools for Daitogiken",
   "description": "Extended CMake support in Visual Studio Code",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "publisher": "ms-vscode",
   "repository": {
     "type": "git",
@@ -587,6 +587,12 @@
         "category": "CMake"
       },
       {
+        "command": "cmake.stopTarget",
+        "title": "%cmake-tools.command.cmake.stopTarget.title%",
+        "when": "cmake:enableFullFeatureSet",
+        "category": "CMake"
+      },
+      {
         "command": "cmake.selectLaunchTarget",
         "title": "%cmake-tools.command.cmake.selectLaunchTarget.title%",
         "when": "cmake:enableFullFeatureSet",
@@ -943,6 +949,10 @@
         {
           "command": "cmake.launchTargetAll",
           "when": "cmake:multiProject && !cmake:hideLaunchCommand && cmake:enableFullFeatureSet"
+        },
+        {
+          "command": "cmake.stopTarget",
+          "when": "cmake:enableFullFeatureSet"
         },
         {
           "when": "cmake:enableFullFeatureSet",
@@ -2534,6 +2544,11 @@
         "key": "shift+f5",
         "command": "cmake.launchTarget",
         "when": "!inDebugMode && !cmake:hideDebugCommand && cmake:enableFullFeatureSet"
+      },
+      {
+        "key": "ctrl+f7",
+        "when": "!cmake:hideBuildCommand && cmake:enableFullFeatureSet",
+        "command": "cmake.stopTarget"
       }
     ],
     "viewsContainers": {
