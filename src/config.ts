@@ -68,6 +68,9 @@ export interface AdvancedStatusBarConfig {
     build?: {
         visibility?: StatusBarButtonVisibility;
     };
+    rebuild?: {
+        visibility?: StatusBarButtonVisibility;
+    };
     launchTarget?: {
         visibility?: StatusBarButtonVisibility;
     };

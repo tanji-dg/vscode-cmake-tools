@@ -106,6 +106,10 @@ export class ProjectStatus {
         await treeDataProvider.hideBuildButton(isHidden);
     }
 
+    async hideRebuildButton(isHidden: boolean) {
+        await treeDataProvider.hideRebuildButton(isHidden);
+    }
+
     async hideDebugButton(isHidden: boolean) {
         await treeDataProvider.hideDebugButton(isHidden);
     }
@@ -130,6 +134,7 @@ class TreeDataProvider implements vscode.TreeDataProvider<Node>, vscode.Disposab
     private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
     private activeCMakeProject?: CMakeProject;
     private isBuildButtonHidden: boolean = false;
+    private isRebuildButtonHidden: boolean = false;
     private isDebugButtonHidden: boolean = false;
     private isLaunchButtonHidden: boolean = false;
     private isBusy: boolean = false;
@@ -151,14 +156,17 @@ class TreeDataProvider implements vscode.TreeDataProvider<Node>, vscode.Disposab
         if (cmakeProject) {
             this.activeCMakeProject = cmakeProject;
             // this.isBuildButtonHidden = cmakeProject.hideBuildButton;
+            // this.isRebuildButtonHidden = cmakeProject.hideRebuildButton;
             // this.isDebugButtonHidden = cmakeProject.hideDebugButton;
             // this.isLaunchButtonHidden = cmakeProject.hideLaunchButton;
             // temporary to not allow status bar settings to affect side bar view
             this.isBuildButtonHidden = false;
+            this.isRebuildButtonHidden = false;
             this.isDebugButtonHidden = false;
             this.isLaunchButtonHidden = false;
         } else {
             this.isBuildButtonHidden = false;
+            this.isRebuildButtonHidden = false;
             this.isDebugButtonHidden = false;
             this.isLaunchButtonHidden = false;
         }
@@ -255,6 +263,16 @@ class TreeDataProvider implements vscode.TreeDataProvider<Node>, vscode.Disposab
                 this.activeCMakeProject.hideBuildButton = isHidden;
             }
             this.isBuildButtonHidden = isHidden;
+            await this.refresh();
+        }
+    }
+
+    public async hideRebuildButton(isHidden: boolean) {
+        if (isHidden !== this.isRebuildButtonHidden) {
+            if (this.activeCMakeProject) {
+                this.activeCMakeProject.hideRebuildButton = isHidden;
+            }
+            this.isRebuildButtonHidden = isHidden;
             await this.refresh();
         }
     }

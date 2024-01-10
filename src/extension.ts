@@ -58,6 +58,7 @@ const multiProjectModeKey = 'cmake:multiProject';
 export const hideLaunchCommandKey = 'cmake:hideLaunchCommand';
 export const hideDebugCommandKey = 'cmake:hideDebugCommand';
 export const hideBuildCommandKey = 'cmake:hideBuildCommand';
+export const hideRebuildCommandKey = 'cmake:hideRebuildCommand';
 
 /**
  * The global extension manager. There is only one of these, even if multiple
@@ -1498,6 +1499,12 @@ export class ExtensionManager implements vscode.Disposable {
         // await this.projectController.hideBuildButton(shouldHide);
         this.statusBar.hideBuildButton(shouldHide);
         await util.setContextValue(hideBuildCommandKey, shouldHide);
+    }
+
+    async hideRebuildCommand(shouldHide: boolean = true) {
+        // await this.projectController.hideRebuildButton(shouldHide);
+        this.statusBar.hideRebuildButton(shouldHide);
+        await util.setContextValue(hideRebuildCommandKey, shouldHide);
     }
 
     // Answers whether the workspace contains at least one project folder that is CMake based,

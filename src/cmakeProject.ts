@@ -904,6 +904,7 @@ export class CMakeProject {
         log.debug(localize('second.phase.init', 'Starting CMake Tools second-phase init'));
         await this.setSourceDir(await util.normalizeAndVerifySourceDir(sourceDirectory, CMakeDriver.sourceDirExpansionOptions(this.workspaceContext.folder.uri.fsPath)));
         this.hideBuildButton = (this.workspaceContext.config.statusbar.advanced?.build?.visibility === "hidden") ? true : false;
+        this.hideRebuildButton = (this.workspaceContext.config.statusbar.advanced?.rebuild?.visibility === "hidden") ? true : false;
         this.hideDebugButton = (this.workspaceContext.config.statusbar.advanced?.debug?.visibility === "hidden") ? true : false;
         this.hideLaunchButton = (this.workspaceContext.config.statusbar.advanced?.launch?.visibility === "hidden") ? true : false;
         // Start up the variant manager
@@ -2905,16 +2906,19 @@ export class CMakeProject {
     }
 
     public hideBuildButton: boolean = false;
+    public hideRebuildButton: boolean = false;
     public hideDebugButton: boolean = false;
     public hideLaunchButton: boolean = false;
     doStatusBarChange(statusbar: StatusBarConfig) {
         if (statusbar.visibility === "hidden") {
             this.hideBuildButton = true;
+            this.hideRebuildButton = true;
             this.hideDebugButton = true;
             this.hideLaunchButton = true;
             return;
         }
         this.hideBuildButton = (statusbar.advanced?.build?.visibility === "hidden") ? true : false;
+        this.hideRebuildButton = (statusbar.advanced?.rebuild?.visibility === "hidden") ? true : false;
         this.hideDebugButton = (statusbar.advanced?.debug?.visibility === "hidden") ? true : false;
         this.hideLaunchButton = (statusbar.advanced?.launch?.visibility === "hidden") ? true : false;
     }

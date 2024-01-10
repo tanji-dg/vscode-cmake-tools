@@ -149,6 +149,7 @@ export class ProjectController implements vscode.Disposable {
             this.activeTestPresetSub = project.onActiveTestPresetChanged(FireNow, () => void projectStatus.refresh());
             this.isBusySub = project.onIsBusyChanged(FireNow, (isBusy) => void projectStatus.setIsBusy(isBusy));
             await util.setContextValue(ext.hideBuildCommandKey, project.hideBuildButton);
+            await util.setContextValue(ext.hideRebuildCommandKey, project.hideRebuildButton);
             await util.setContextValue(ext.hideDebugCommandKey, project.hideDebugButton);
             await util.setContextValue(ext.hideLaunchCommandKey, project.hideLaunchButton);
         }
@@ -481,6 +482,7 @@ export class ProjectController implements vscode.Disposable {
         }
         await projectStatus.doStatusBarChange();
         await util.setContextValue(ext.hideBuildCommandKey, (statusbar.advanced?.build?.visibility === "hidden") ? true : false);
+        await util.setContextValue(ext.hideRebuildCommandKey, (statusbar.advanced?.rebuild?.visibility === "hidden") ? true : false);
         await util.setContextValue(ext.hideDebugCommandKey, (statusbar.advanced?.debug?.visibility === "hidden") ? true : false);
         await util.setContextValue(ext.hideLaunchCommandKey, (statusbar.advanced?.launch?.visibility === "hidden") ? true : false);
     }
@@ -489,6 +491,12 @@ export class ProjectController implements vscode.Disposable {
         // Doesn't hide the button in the Side Bar because there are no space-saving issues there vs status bar
         // await projectStatus.hideBuildButton(isHidden);
         await util.setContextValue(ext.hideBuildCommandKey, isHidden);
+    }
+
+    async hideRebuildButton(isHidden: boolean) {
+        // Doesn't hide the button in the Side Bar because there are no space-saving issues there vs status bar
+        // await projectStatus.hideRebuildButton(isHidden);
+        await util.setContextValue(ext.hideRebuildCommandKey, isHidden);
     }
 
     async hideDebugButton(isHidden: boolean) {
