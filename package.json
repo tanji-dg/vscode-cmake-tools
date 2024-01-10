@@ -54,7 +54,9 @@
     "workspaceContains:*/CMakeLists.txt",
     "workspaceContains:*/*/CMakeLists.txt",
     "workspaceContains:*/*/*/CMakeLists.txt",
-    "workspaceContains:.vscode/cmake-kits.json"
+    "workspaceContains:.vscode/cmake-kits.json",
+    "workspaceContains:cmake/CMakeLists.txt",
+    "workspaceContains:cmake/CMakePresets.json"
   ],
   "main": "./dist/main",
   "contributes": {
