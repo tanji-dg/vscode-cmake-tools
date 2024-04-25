@@ -479,13 +479,13 @@ class RebuildButton extends BaseBuildButton {
     settingsName = 'rebuild';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
-        this.command = 'cmake.rebuild';
+        this.command = 'cmake.cleanRebuild';
         this.tooltip = localize('rebuild.tooltip', 'Rebuild the selected target');
     }
 
     set isBusy(v: boolean) {
         this._isBusy = v;
-        this.button.command = v ? 'cmake.stop' : 'cmake.build';
+        this.button.command = v ? 'cmake.stop' : 'cmake.cleanRebuild';
         this.icon = this._isBusy ? 'x' : 'gear';
         this.text = this._isBusy ? RebuildButton._stop : RebuildButton._build;
         // update implicitly called in set text.
@@ -705,6 +705,7 @@ export class StatusBar implements vscode.Disposable {
     }
     setIsBusy(v: boolean): void {
         this._buildButton.isBusy = v;
+        this._rebuildButton.isBusy = v;
     }
     setActiveKitName(v: string): void {
         this._kitSelectionButton.text = v;

@@ -21,6 +21,8 @@
 	"run.ctest": "CTest の実行",
 	"build.tooltip": "選択したターゲットをビルドします",
 	"build": "ビルド",
+	"rebuild.tooltip": "選択したターゲットをリビルドします",
+	"rebuild": "リビルド",
 	"stop": "停止",
 	"click.to.change.configure.preset.tooltip": "アクティブな構成の事前設定を変更するには、クリックします",
 	"no.configure.preset.selected": "構成の事前設定が選択されていません",
