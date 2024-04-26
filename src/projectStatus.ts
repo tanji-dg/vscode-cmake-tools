@@ -146,6 +146,10 @@ export class ProjectStatus {
         await treeDataProvider.hideBuildButton(isHidden);
     }
 
+    async hideRebuildButton(isHidden: boolean) {
+        await treeDataProvider.hideRebuildButton(isHidden);
+    }
+
     async hideDebugButton(isHidden: boolean) {
         await treeDataProvider.hideDebugButton(isHidden);
     }
@@ -172,6 +176,7 @@ class TreeDataProvider implements vscode.TreeDataProvider<Node>, vscode.Disposab
     private isFolderButtonHidden: boolean = false;
     private isConfigButtonHidden: boolean = false;
     private isBuildButtonHidden: boolean = false;
+    private isRebuildButtonHidden: boolean = false;
     private isTestButtonHidden: boolean = false;
     private isPackageButtonHidden: boolean = false;
     private isWorkflowButtonHidden: boolean = false;
@@ -205,6 +210,7 @@ class TreeDataProvider implements vscode.TreeDataProvider<Node>, vscode.Disposab
             this.isConfigButtonHidden = false;
             this.isFolderButtonHidden = false;
             this.isBuildButtonHidden = false;
+            this.isRebuildButtonHidden = false;
             this.isTestButtonHidden = false;
             this.isPackageButtonHidden = false;
             this.isWorkflowButtonHidden = false;
@@ -400,6 +406,16 @@ class TreeDataProvider implements vscode.TreeDataProvider<Node>, vscode.Disposab
                 this.activeCMakeProject.hideBuildButton = isHidden;
             }
             this.isBuildButtonHidden = isHidden;
+            await this.refresh();
+        }
+    }
+
+    public async hideRebuildButton(isHidden: boolean) {
+        if (isHidden !== this.isRebuildButtonHidden) {
+            if (this.activeCMakeProject) {
+                this.activeCMakeProject.hideRebuildButton = isHidden;
+            }
+            this.isRebuildButtonHidden = isHidden;
             await this.refresh();
         }
     }

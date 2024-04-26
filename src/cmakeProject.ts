@@ -1135,7 +1135,9 @@ export class CMakeProject {
         // Set the status bar message
         this.activeVariant.set(this.variantManager.activeVariantOptions.short);
         // Restore the debug target
-        this._launchTargetName.set(this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder) || '');
+        const defaultLaunchTarget = this.workspaceContext.config.defaultLaunchTarget || '';
+        this._launchTargetName.set(this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder) || defaultLaunchTarget);
+        await this.workspaceContext.state.setLaunchTargetName(this.folderName, this._launchTargetName.value, this.isMultiProjectFolder);
 
         // Hook up event handlers
         // Listen for the variant to change
@@ -3127,6 +3129,7 @@ export class CMakeProject {
 
     doStatusChange(options: OptionConfig) {
         this.hideBuildButton = (options?.advanced?.build?.statusBarVisibility === "hidden" && options?.advanced?.build?.projectStatusVisibility === "hidden") ? true : false;
+        this.hideRebuildButton = (statusbar.advanced?.rebuild?.visibility === "hidden") ? true : false;
         this.hideDebugButton = (options?.advanced?.debug?.statusBarVisibility === "hidden" && options?.advanced?.debug?.projectStatusVisibility === "hidden") ? true : false;
         this.hideLaunchButton = (options?.advanced?.launch?.statusBarVisibility === "hidden" && options?.advanced?.launch?.projectStatusVisibility === "hidden") ? true : false;
     }

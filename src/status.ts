@@ -377,7 +377,23 @@ class LaunchTargetSelectionButton extends Button {
     }
 }
 
-class DebugButton extends Button {
+class ControlButton extends Button {
+    private _target: string | null = null;
+
+    set target(v: string | null) {
+        this._target = v;
+        this.update();
+    }
+
+    protected getTooltipNormal(): string | null {
+        if (!!this._target) {
+            return `${this.tooltip}: [${this._target}]`;
+        }
+        return this.tooltip;
+    }
+}
+
+class DebugButton extends ControlButton {
     settingsName = 'debug';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
@@ -386,46 +402,28 @@ class DebugButton extends Button {
         this.tooltip = localize('launch.debugger.tooltip', 'Launch the debugger for the selected target');
     }
 
-    private _target: string | null = null;
-
-    set target(v: string | null) {
-        this._target = v;
-        this.update();
-    }
-
-    protected getTooltipNormal(): string | null {
-        if (!!this._target) {
-            return `${this.tooltip}: [${this._target}]`;
-        }
-        return this.tooltip;
-    }
-
     protected isVisible(): boolean {
         return super.isVisible() && hasCPPTools();
     }
 }
 
-class LaunchButton extends Button {
+class LaunchButton extends ControlButton {
     settingsName = 'launch';
     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
         super(config, priority);
         this.command = 'cmake.launchTarget';
         this.icon = 'play';
-        this.tooltip = localize('launch.tooltip', 'Launch the selected target in the terminal window');
+        this.tooltip = localize('launch.tooltip', 'Launch the selected target');
     }
+}
 
-    private _target: string | null = null;
-
-    set target(v: string | null) {
-        this._target = v;
-        this.update();
-    }
-
-    protected getTooltipNormal(): string | null {
-        if (!!this._target) {
-            return `${this.tooltip}: [${this._target}]`;
-        }
-        return this.tooltip;
+class StopButton extends ControlButton {
+    settingsName = 'stop';
+    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
+        super(config, priority);
+        this.command = 'cmake.stopTarget';
+        this.icon = 'debug-stop';
+        this.tooltip = localize('stop.tooltip', 'Stop the selected target');
     }
 }
 
@@ -603,28 +601,11 @@ class WorkflowButton extends Button {
     }
 }
 
-class BuildButton extends Button {
-    private static readonly _build = localize('build', 'Build');
-    private static readonly _stop = localize('stop', 'Stop');
+class BaseBuildButton extends Button {
 
-    settingsName = 'build';
-    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
-        super(config, priority);
-        this.command = 'cmake.build';
-        this.tooltip = localize('build.tooltip', 'Build the selected target');
-    }
+    protected _isBusy: boolean = false;
+    protected _target: string | null = null;
 
-    private _isBusy: boolean = false;
-    private _target: string | null = null;
-
-    set isBusy(v: boolean) {
-        this._isBusy = v;
-        this.button.command = v ? 'cmake.stop' : 'cmake.build';
-        this.icon = this._isBusy ? 'x' : 'gear';
-        this.text = this._isBusy ? BuildButton._stop : BuildButton._build;
-        // update implicitly called in set text.
-        // this.update();
-    }
     set target(v: string | null) {
         this._target = v;
         this.update();
@@ -649,6 +630,48 @@ class BuildButton extends Button {
 
     protected isVisible(): boolean {
         return super.isVisible() && (this._isBusy || true);
+    }
+}
+
+class BuildButton extends BaseBuildButton {
+    private static readonly _build = localize('build', 'Build');
+    private static readonly _stop = localize('stop', 'Stop');
+
+    settingsName = 'build';
+    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
+        super(config, priority);
+        this.command = 'cmake.build';
+        this.tooltip = localize('build.tooltip', 'Build the selected target');
+    }
+
+    set isBusy(v: boolean) {
+        this._isBusy = v;
+        this.button.command = v ? 'cmake.stop' : 'cmake.build';
+        this.icon = this._isBusy ? 'x' : 'gear';
+        this.text = this._isBusy ? BuildButton._stop : BuildButton._build;
+        // update implicitly called in set text.
+        // this.update();
+    }
+}
+
+class RebuildButton extends BaseBuildButton {
+    private static readonly _build = localize('rebuild', 'Rebuild');
+    private static readonly _stop = localize('stop', 'Stop');
+
+    settingsName = 'rebuild';
+    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
+        super(config, priority);
+        this.command = 'cmake.cleanRebuild';
+        this.tooltip = localize('rebuild.tooltip', 'Rebuild the selected target');
+    }
+
+    set isBusy(v: boolean) {
+        this._isBusy = v;
+        this.button.command = v ? 'cmake.stop' : 'cmake.cleanRebuild';
+        this.icon = this._isBusy ? 'x' : 'gear';
+        this.text = this._isBusy ? RebuildButton._stop : RebuildButton._build;
+        // update implicitly called in set text.
+        // this.update();
     }
 }
 
@@ -875,12 +898,14 @@ export class StatusBar implements vscode.Disposable {
     private readonly _kitSelectionButton = new KitSelection(this._config, 3.4);
 
     private readonly _buildButton: BuildButton = new BuildButton(this._config, 3.35);
+    private readonly _rebuildButton: RebuildButton = new RebuildButton(this._config, 3.35);
     private readonly _buildPresetButton = new BuildPresetSelection(this._config, 3.33);
     private readonly _buildTargetNameButton = new BuildTargetSelectionButton(this._config, 3.3);
 
     private readonly _debugButton: DebugButton = new DebugButton(this._config, 3.22);
     private readonly _launchButton = new LaunchButton(this._config, 3.21);
     private readonly _launchTargetNameButton = new LaunchTargetSelectionButton(this._config, 3.2);
+    private readonly _stopButton = new StopButton(this._config, 3.21);
 
     private readonly _testPresetButton = new TestPresetSelection(this._config, 3.15);
     private readonly _testButton = new CTestButton(this._config, 3.1);
@@ -902,12 +927,14 @@ export class StatusBar implements vscode.Disposable {
             this._launchTargetNameButton,
             this._debugButton,
             this._buildButton,
+            this._rebuildButton,
             this._testButton,
             this._packButton,
             this._workflowButton,
             this._launchButton,
             this._configurePresetButton,
             this._buildPresetButton,
+            this._stopButton,
             this._testPresetButton,
             this._packagePresetButton,
             this._workflowPresetButton
@@ -943,11 +970,13 @@ export class StatusBar implements vscode.Disposable {
     setBuildTargetName(v: string): void {
         this._buildTargetNameButton.text = v;
         this._buildButton.target = v;
+        this._rebuildButton.target = v;
     }
     setLaunchTargetName(v: string): void {
         this._launchTargetNameButton.text = v;
         this._launchButton.target = v;
         this._debugButton.target = v;
+        this._stopButton.target = v;
     }
     setCTestEnabled(v: boolean): void {
         this._testButton.enabled = v;
@@ -960,6 +989,7 @@ export class StatusBar implements vscode.Disposable {
     }
     setIsBusy(v: boolean): void {
         this._buildButton.isBusy = v;
+        this._rebuildButton.isBusy = v;
     }
     setActiveKitName(v: string): void {
         this._kitSelectionButton.text = v;
@@ -1003,6 +1033,9 @@ export class StatusBar implements vscode.Disposable {
     }
     hideBuildButton(shouldHide: boolean = true): void {
         this._buildButton.hidden = shouldHide;
+    }
+    hideRebuildButton(shouldHide: boolean = true): void {
+        this._rebuildButton.hidden = shouldHide;
     }
 
     useCMakePresets(isUsing: boolean = true): void {

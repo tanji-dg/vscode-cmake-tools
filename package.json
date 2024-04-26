@@ -1,8 +1,8 @@
 {
-  "name": "cmake-tools",
-  "displayName": "CMake Tools",
+  "name": "cmake-tools-dg",
+  "displayName": "CMake Tools for Daitogiken",
   "description": "Extended CMake support in Visual Studio Code",
-  "version": "1.13.0",
+  "version": "1.3.0",
   "publisher": "ms-vscode",
   "repository": {
     "type": "git",
@@ -62,6 +62,8 @@
     "workspaceContains:*/*/CMakeLists.txt",
     "workspaceContains:*/*/*/CMakeLists.txt",
     "workspaceContains:.vscode/cmake-kits.json",
+    "workspaceContains:cmake/CMakeLists.txt",
+    "workspaceContains:cmake/CMakePresets.json",
     "onLanguage:cmake",
     "onFileSystem:cmake-tools-schema"
   ],
@@ -424,6 +426,11 @@
         }
       },
       {
+        "command": "cmake.buildNamedTarget",
+        "when": "cmake:enableFullFeatureSet",
+        "title": "%cmake-tools.command.cmake.buildNamedTarget.title%"
+      },
+      {
         "command": "cmake.compileFile",
         "title": "%cmake-tools.command.cmake.compileFile.title%",
         "category": "CMake",
@@ -748,6 +755,12 @@
         "category": "CMake"
       },
       {
+        "command": "cmake.stopTarget",
+        "title": "%cmake-tools.command.cmake.stopTarget.title%",
+        "when": "cmake:enableFullFeatureSet",
+        "category": "CMake"
+      },
+      {
         "command": "cmake.selectLaunchTarget",
         "title": "%cmake-tools.command.cmake.selectLaunchTarget.title%",
         "when": "cmake:enableFullFeatureSet",
@@ -820,7 +833,7 @@
         "when": "cmake:enableFullFeatureSet",
         "title": "%cmake-tools.command.cmake.projectStatus.update.title%",
         "category": "CMake",
-        "icon": "$(refresh)"      
+        "icon": "$(refresh)"
       },
       {
         "command": "cmake.pinnedCommands.add",
@@ -3482,6 +3495,12 @@
             }
           }
         },
+        "cmake.useProjectStatusView": {
+          "type": "boolean",
+          "default": false,
+          "description": "%cmake-tools.configuration.cmake.useProjectStatusView.description%",
+          "scope": "window"
+        },
         "cmake.additionalKits": {
           "type": "array",
           "default": [],
@@ -3583,6 +3602,55 @@
           "description": "%cmake-tools.configuration.cmake.enableAutomaticKitScan.description%",
           "scope": "resource"
         }
+        "cmake.customTasks": {
+          "type": "object",
+          "properties": {
+            "launch": {
+              "type": "object",
+              "properties": {
+                "preBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
+                },
+                "postBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.postBuild.description%"
+                }
+              },
+              "description": "%cmake-tools.configuration.cmake.customTasks.launch.debug.description%"
+            },
+            "debug": {
+              "type": "object",
+              "properties": {
+                "preBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
+                },
+                "postBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.postBuild.description%"
+                }
+              },
+              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.debug.description%"
+            },
+            "stop": {
+              "type": "string",
+              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.stop.description%"
+            }
+          },
+          "description": "%cmake-tools.configuration.cmake.customTasks.description%",
+          "scope": "resource"
+        },
+        "cmake.debugConfigName": {
+          "type": "string",
+          "description": "%cmake-tools.configuration.cmake.debugConfigName.description%",
+          "scope": "resource"
+        },
+        "cmake.defaultLaunchTarget": {
+          "type": "string",
+          "description": "%cmake-tools.configuration.cmake.defaultLaunchTarget.description%",
+          "scope": "resource"
+        }
       }
     },
     "keybindings": [
@@ -3605,6 +3673,11 @@
         "key": "shift+f5",
         "command": "cmake.launchTarget",
         "when": "!inDebugMode && !cmake:hideDebugCommand && cmake:enableFullFeatureSet"
+      },
+      {
+        "key": "ctrl+f7",
+        "when": "!cmake:hideBuildCommand && cmake:enableFullFeatureSet",
+        "command": "cmake.stopTarget"
       }
     ],
     "viewsContainers": {
@@ -3680,7 +3753,9 @@
     "vscode:prepublish": "yarn run compile-production",
     "compile": "yarn install && webpack --mode development",
     "compile-watch": "yarn install && webpack --mode development --watch --progress",
-    "compile-production": "yarn install && yarn run translations-generate && webpack --env BUILD_VSCODE_NLS=true --mode production",
+    "compile-watch-fast": "webpack --mode development --watch --progress",
+    "compile-production": "yarn install && yarn run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
+    "compile-production-fast": "yarn run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
     "translations-export": "gulp translations-export",
     "translations-generate": "gulp translations-generate",
     "translations-import": "gulp translations-import",
@@ -3709,7 +3784,7 @@
     "@types/tmp": "^0.2.0",
     "@types/vscode": "1.63.0",
     "@types/which": "~2.0.0",
-    "@types/xml2js": "0.4.14",
+    "@types/xml2js": "^0.4.8",
     "@types/uuid": "~8.3.3",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/eslint-plugin-tslint": "^5.25.0",
@@ -3762,12 +3837,13 @@
     "rimraf": "^3.0.2",
     "string.prototype.matchall": "^4.0.10",
     "tmp": "^0.2.1",
+    "uuid": "~8.3.2",
     "vscode-cpptools": "^6.1.0",
     "@vscode/extension-telemetry": "^0.6.2",
-    "vscode-nls": "^5.0.0",
+    "vscode-nls": "git+https://github.com/tanji-dg/vscode-nls.git#v5.0.0",
     "vscode-tas-client": "^0.1.45",
     "which": "~2.0.2",
-    "xml2js": "0.4.23",
+    "xml2js": "^0.4.23",
     "uuid": "~8.3.2"
   },
   "resolutions": {
@@ -3779,8 +3855,9 @@
     "**/minimist": "^1.2.5",
     "nanoid": "^3.1.31",
     "postcss": "^8.2.10",
+    "source-map": "^0.8.0-beta.0",
     "yargs-parser": "^20.2.4",
-    "xml2js": "0.4.23",
+    "xml2js": "^0.5.0",
     "tsconfig-paths*/json5": "^1.0.2",
     "minimatch": "^3.0.5"
   }, 
