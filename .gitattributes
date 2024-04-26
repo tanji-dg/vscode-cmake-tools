@@ -1,4 +1,4 @@
 * eol=lf
-*.png   binary
+*.png binary
 *.exe binary
-*.tgz filter=lfs diff=lfs merge=lfs -text
+*.tgz binary
