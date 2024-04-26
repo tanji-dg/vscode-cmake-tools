@@ -22,19 +22,24 @@ function createConfig(conf: Partial<ExtensionConfigurationSettings>): Configurat
         buildToolArgs: [],
         parallelJobs: 0,
         ctestPath: '',
+        cpackPath: '',
         ctest: {
-            parallelJobs: 0
+            parallelJobs: 0,
+            allowParallelJobs: false,
+            testExplorerIntegrationEnabled: true
         },
         parseBuildDiagnostics: true,
         enabledOutputParsers: [],
         debugConfig: {},
         defaultVariants: {},
         ctestArgs: [],
+        cpackArgs: [],
         ctestDefaultArgs: [],
         environment: {},
         configureEnvironment: {},
         buildEnvironment: {},
         testEnvironment: {},
+        cpackEnvironment: {},
         mingwSearchDirs: [], // Deprecated in 1.14, replaced by additionalCompilerSearchDirs, but kept for backwards compatibility
         additionalCompilerSearchDirs: [],
         emscriptenSearchDirs: [],
@@ -49,6 +54,7 @@ function createConfig(conf: Partial<ExtensionConfigurationSettings>): Configurat
         showSystemKits: true,
         ignoreKitEnv: false,
         additionalKits: [],
+        pinnedCommands: [],
         buildTask: false,
         outputLogEncoding: 'auto',
         enableTraceLogging: false,
@@ -56,17 +62,18 @@ function createConfig(conf: Partial<ExtensionConfigurationSettings>): Configurat
         touchbar: {
             visibility: "default"
         },
-        statusbar: {
+        showOptionsMovedNotification: true,
+        options: {
             advanced: {},
-            visibility: "default"
+            statusBarVisibility: "visible"
         },
-        useProjectStatusView: true,
         useCMakePresets: 'never',
         allowCommentsInPresetsFile: false,
         allowUnsupportedPresetsVersions: false,
         launchBehavior: 'reuseTerminal',
         ignoreCMakeListsMissing: false,
         automaticReconfigure: false,
+        enableAutomaticKitScan: true,
         customTasks: {},
         debugConfigName: null,
         defaultLaunchTarget: null

@@ -401,8 +401,8 @@ export class CppConfigurationProvider implements cpptools.CustomConfigurationPro
         return true;
     }
 
-    async provideFolderBrowseConfiguration(uri: vscode.Uri): Promise<cpptools.WorkspaceBrowseConfiguration> {
-        return this.workspaceBrowseConfigurations.get(util.platformNormalizePath(uri.fsPath)) ?? this.workspaceBrowseConfiguration;
+    async provideFolderBrowseConfiguration(uri: vscode.Uri): Promise<cpptools.WorkspaceBrowseConfiguration | null> {
+        return this.workspaceBrowseConfigurations.get(util.platformNormalizePath(uri.fsPath)) ?? null;
     }
 
     /** No-op */
@@ -474,7 +474,8 @@ export class CppConfigurationProvider implements cpptools.CustomConfigurationPro
             defines = defines.concat(extraDefinitions);
             intelliSenseMode = getIntelliSenseMode(this.cpptoolsVersion, compilerPath, targetArchFromToolchains ?? targetArch);
         }
-        const includePath = fileGroup.includePath ? fileGroup.includePath.map(p => p.path) : target.includePath || [];
+        const frameworkPaths = Array.from(new Set<string>((fileGroup.frameworks ?? []).map(f => path.dirname(f.path))));
+        const includePath = (fileGroup.includePath ? fileGroup.includePath.map(p => p.path) : target.includePath || []).concat(frameworkPaths);
         const normalizedIncludePath = includePath.map(p => util.platformNormalizePath(p));
 
         const newBrowsePath = this.workspaceBrowseConfiguration.browsePath;
@@ -592,7 +593,7 @@ export class CppConfigurationProvider implements cpptools.CustomConfigurationPro
         }
         for (const config of opts.codeModelContent.configurations) {
             // Update only the active build type variant.
-            if (config.name === opts.activeBuildTypeVariant) {
+            if (config.name === opts.activeBuildTypeVariant || (!opts.activeBuildTypeVariant && config.name === "")) {
                 for (const project of config.projects) {
                     for (const target of project.targets) {
                         // Now some shenanigans since header files don't have config data:

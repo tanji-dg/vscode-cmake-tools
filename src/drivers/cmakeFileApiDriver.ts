@@ -26,10 +26,13 @@ import rollbar from '@cmt/rollbar';
 import * as util from '@cmt/util';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { BuildPreset, ConfigurePreset, getValue, TestPreset } from '@cmt/preset';
+import { BuildPreset, ConfigurePreset, getValue, TestPreset, PackagePreset, WorkflowPreset } from '@cmt/preset';
 import * as nls from 'vscode-nls';
 import { DebuggerInformation } from '@cmt/debug/debuggerConfigureDriver';
 import { CMakeOutputConsumer, StateMessage } from '@cmt/diagnostics/cmake';
+import { ConfigureTrigger } from '@cmt/cmakeProject';
+import { logCMakeDebuggerTelemetry } from '@cmt/debug/cmakeDebuggerTelemetry';
+import { onConfigureSettingsChange } from '@cmt/ui/util';
 
 nls.config({ messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFormat.standalone })();
 const localize: nls.LocalizeFunc = nls.loadMessageBundle();
@@ -62,16 +65,20 @@ export class CMakeFileApiDriver extends CMakeDriver {
         configurePreset: ConfigurePreset | null,
         buildPreset: BuildPreset | null,
         testPreset: TestPreset | null,
+        packagePreset: PackagePreset | null,
+        workflowPreset: WorkflowPreset | null,
         workspaceRootPath: string,
         preconditionHandler: CMakePreconditionProblemSolver,
         preferredGenerators: CMakeGenerator[]): Promise<CMakeFileApiDriver> {
-        log.debug('Creating instance of CMakeFileApiDriver');
+        log.debug(localize('creating.instance.of', 'Creating instance of {0}', "CMakeFileApiDriver"));
         return this.createDerived(new CMakeFileApiDriver(cmake, config, sourceDir, isMultiProject, workspaceRootPath, preconditionHandler),
             useCMakePresets,
             kit,
             configurePreset,
             buildPreset,
             testPreset,
+            packagePreset,
+            workflowPreset,
             preferredGenerators);
     }
 
@@ -122,7 +129,7 @@ export class CMakeFileApiDriver extends CMakeDriver {
             await this.loadGeneratorInformationFromCache(this.cachePath);
             const code_model_exist = await this.updateCodeModel();
             if (!code_model_exist && this.config.configureOnOpen === true) {
-                await this.doConfigure([], undefined);
+                await this.doConfigure([], undefined, undefined);
             }
         } else {
             // Do not delete the cache if configureOnOpen is false, which signals a project that may be
@@ -152,8 +159,9 @@ export class CMakeFileApiDriver extends CMakeDriver {
         });
     }
 
-    doConfigureSettingsChange() {
+    async doConfigureSettingsChange(): Promise<void> {
         this._needsReconfigure = true;
+        await onConfigureSettingsChange();
     }
     async checkNeedsReconfigure(): Promise<boolean> {
         return this._needsReconfigure;
@@ -183,6 +191,14 @@ export class CMakeFileApiDriver extends CMakeDriver {
         return cb();
     }
 
+    doSetPackagePreset(cb: () => Promise<void>): Promise<void> {
+        return cb();
+    }
+
+    doSetWorkflowPreset(cb: () => Promise<void>): Promise<void> {
+        return cb();
+    }
+
     async asyncDispose() {
         this._codeModelChanged.dispose();
         this._cacheWatcher.dispose();
@@ -198,7 +214,7 @@ export class CMakeFileApiDriver extends CMakeDriver {
         return 0;
     }
 
-    async doConfigure(args_: string[], outputConsumer?: proc.OutputConsumer, showCommandOnly?: boolean, configurePreset?: ConfigurePreset | null, options?: proc.ExecutionOptions, debuggerInformation?: DebuggerInformation): Promise<number> {
+    async doConfigure(args_: string[], trigger?: ConfigureTrigger, outputConsumer?: proc.OutputConsumer, showCommandOnly?: boolean, defaultConfigurePresetName?: string, configurePreset?: ConfigurePreset | null, options?: proc.ExecutionOptions, debuggerInformation?: DebuggerInformation): Promise<number> {
         const binaryDir = configurePreset?.binaryDir ?? this.binaryDir;
         const api_path = this.getCMakeFileApiPath(binaryDir);
         await createQueryFileForApi(api_path);
@@ -242,10 +258,10 @@ export class CMakeFileApiDriver extends CMakeDriver {
         if (debuggerInformation) {
             args.push("--debugger");
             args.push("--debugger-pipe");
-            args.push(`${debuggerInformation.debuggerPipeName}`);
-            if (debuggerInformation.debuggerDapLog) {
+            args.push(`${debuggerInformation.pipeName}`);
+            if (debuggerInformation.dapLog) {
                 args.push("--debugger-dap-log");
-                args.push(debuggerInformation.debuggerDapLog);
+                args.push(debuggerInformation.dapLog);
             }
         }
 
@@ -273,13 +289,17 @@ export class CMakeFileApiDriver extends CMakeDriver {
                     // if there isn't a `debuggerIsReady` callback provided, this means that this invocation was
                     // started by a command, rather than by a launch configuration, and the debug session will start from here.
                     if (debuggerInformation.debuggerIsReady) {
+                        // This cmake debug invocation came from a launch configuration. All telemetry is handled in the createDebugAdapterDescriptor handler.
                         debuggerInformation.debuggerIsReady();
                     } else {
+                        const cmakeDebugType = "configure";
+                        logCMakeDebuggerTelemetry(trigger ?? "", cmakeDebugType);
                         await vscode.debug.startDebugging(undefined, {
                             name: localize("cmake.debug.name", "CMake Debugger"),
                             request: "launch",
                             type: "cmake",
-                            debuggerPipeName: debuggerInformation.debuggerPipeName,
+                            cmakeDebugType,
+                            pipeName: debuggerInformation.pipeName,
                             fromCommand: true
                         });
                     }
@@ -291,7 +311,7 @@ export class CMakeFileApiDriver extends CMakeDriver {
             log.trace(result.stderr);
             log.trace(result.stdout);
             if (result.retc === 0) {
-                if (!configurePreset) {
+                if (!configurePreset || (configurePreset && defaultConfigurePresetName && configurePreset.name === defaultConfigurePresetName)) {
                     this._needsReconfigure = false;
                 }
                 await this.updateCodeModel(binaryDir);
@@ -384,7 +404,7 @@ export class CMakeFileApiDriver extends CMakeDriver {
             const metaTargets = [{
                 type: 'rich' as 'rich',
                 name: this.allTargetName,
-                filepath: 'A special target to build all available targets',
+                filepath: localize('build.all.target', 'A special target to build all available targets'),
                 targetType: 'META'
             }];
             return [...metaTargets, ...targets].filter((value, idx, self) => self.findIndex(e => value.name === e.name) === idx);

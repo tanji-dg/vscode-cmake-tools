@@ -122,6 +122,11 @@ export namespace CodeModelKind {
         fragment: string;
     }
 
+    export interface FrameworkMetadata {
+        isSystem?: boolean;
+        path: string;
+    }
+
     export interface CompileGroup {
         language: string;
         includes: IncludeMetadata[];
@@ -129,6 +134,9 @@ export namespace CodeModelKind {
         compileCommandFragments: CompileCommandFragments[];
         sourceIndexes: number[];
         sysroot: SysRoot;
+
+        // Added in CMake 3.27, codemodel version 2.6.
+        frameworks?: FrameworkMetadata[];
     }
 
     export interface ArtifactPath {
@@ -141,6 +149,15 @@ export namespace CodeModelKind {
         isGenerated?: boolean;
     }
 
+    export interface Dependency {
+        backtrace: number;
+        id: string;
+    }
+
+    export interface Folder {
+        name: string;
+    }
+
     export interface TargetObject {
         name: string;
         type: string;
@@ -149,6 +166,9 @@ export namespace CodeModelKind {
         paths: PathInfo;
         sources: TargetSourcefile[];
         compileGroups?: CompileGroup[];
+        dependencies?: Dependency[];
+        folder?: Folder;
+        isGeneratorProvided?: boolean;
     }
 }
 
@@ -391,7 +411,7 @@ export async function loadAllTargetsForBuildTypeConfiguration(replyPath: string,
         metaTargets.push({
             type: 'rich' as 'rich',
             name: 'install',
-            filepath: 'A special target to install all available targets',
+            filepath: localize('install.all.target', 'A special target to install all available targets'),
             targetType: 'META'
         });
     }
@@ -433,7 +453,8 @@ function convertToExtCodeModelFileGroup(targetObject: CodeModelKind.TargetObject
             language: group.language,
             includePath: group.includes ? group.includes : [],
             compileCommandFragments,
-            defines: group.defines ? group.defines.map(define => define.define) : []
+            defines: group.defines ? group.defines.map(define => define.define) : [],
+            frameworks: group.frameworks
         };
     });
     // Collection all without compilegroup like headers
@@ -481,7 +502,10 @@ async function loadCodeModelTarget(rootPaths: CodeModelKind.PathInfo, jsonFile: 
             a => convertToAbsolutePath(path.join(targetObject.paths.build, a.path), rootPaths.build))
             : [],
         fileGroups,
-        sysroot
+        sysroot,
+        folder: targetObject.folder,
+        dependencies: targetObject.dependencies,
+        isGeneratorProvided: targetObject.isGeneratorProvided
     } as CodeModelTarget;
 }
 

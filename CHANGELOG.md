@@ -1,8 +1,140 @@
 # What's New?
 
-## 1.15
+## 1.18
+Features:
+
+- Add the possibility to open the current build directory in the Explorer [#1451](https://github.com/microsoft/vscode-cmake-tools/issues/1451)
+- Add support for CMakePresets V7 and V8. [#3549](https://github.com/microsoft/vscode-cmake-tools/issues/3549)
+- Update `api.ts` to add the `onSelectedConfigurationChanged` event. [#3671](https://github.com/microsoft/vscode-cmake-tools/pull/3671) [@OrkunTokdemir](https://github.com/OrkunTokdemir)
+- Add support for CMake Language Support natively in this extension. [#3559](https://github.com/microsoft/vscode-cmake-tools/issues/3559)
+
+Improvements:
+
+- Allow ctests to run in parallel when launched through the Test Explorer. [#3122](https://github.com/microsoft/vscode-cmake-tools/issues/3322)
+- Properly set up environment for MSYS toolchains. [#2447](https://github.com/microsoft/vscode-cmake-tools/issues/2447) [@Steelskin](https://github.com/Steelskin)
+- Allow for users to add `--warn-unused-cli`. This will override our default `--no-warn-unused-cli`. [#1090](https://github.com/microsoft/vscode-cmake-tools/issues/1090)
+- Add option to disable kit scan by default when a kit isn't selected. [#1461](https://github.com/microsoft/vscode-cmake-tools/issues/1461)
+- Show cmake output when version probe fails. [#3650](https://github.com/microsoft/vscode-cmake-tools/issues/3650)
+- Improve various settings scopes [#3601](https://github.com/microsoft/vscode-cmake-tools/issues/3601)
+- Refactor the Project Outline view to show a flat list of targets [#491](https://github.com/microsoft/vscode-cmake-tools/issues/491), [#3684](https://github.com/microsoft/vscode-cmake-tools/issues/3684)
+- Add the ability to pin CMake Commands to the sidebar [#2984](https://github.com/microsoft/vscode-cmake-tools/issues/2984) & [#3296](https://github.com/microsoft/vscode-cmake-tools/issues/3296)
+
+Bug Fixes:
+
+- Fix localization issue in package.json [#3616](https://github.com/microsoft/vscode-cmake-tools/issues/3616)
+- Remove incorrect validation which was breaking references from CMakeUserPresets to CMakePresets [#3636](https://github.com/microsoft/vscode-cmake-tools/issues/3636)
+- Fix 'Debug Test' from 'Test explorer' results in 'launch: property 'program' is missing or empty' [#3280](https://github.com/microsoft/vscode-cmake-tools/issues/3280)
+- Fix "Go to source" in Testing activity + test panel without function [#3362](https://github.com/microsoft/vscode-cmake-tools/issues/3362)
+- Remove an un-implemented "internal" command [#3596](https://github.com/microsoft/vscode-cmake-tools/issues/3596)
+- Fix incorrect test output [#3591](https://github.com/microsoft/vscode-cmake-tools/issues/3591)
+- Fix issue where our searching for cl and ninja was repeatedly unnecessarily, impacting performance. [#3633](https://github.com/microsoft/vscode-cmake-tools/issues/3633)
+- Fix preset environment issue. [#3657](https://github.com/microsoft/vscode-cmake-tools/issues/3657)
+- Fix invocation of vcvarsall.bat script argument for targetArch. [#3672](https://github.com/microsoft/vscode-cmake-tools/issues/3672)
+- Ensure that we support ${workspaceFolder} when initializing cmake information. [#3658](https://github.com/microsoft/vscode-cmake-tools/issues/3658)
+- Fix issue where correcting `cmake.cmakePath` is still broken. [#3570](https://github.com/microsoft/vscode-cmake-tools/issues/3570)
+- Fix CMakePresets.json schema validation. [#3651](https://github.com/microsoft/vscode-cmake-tools/issues/3651)
+
+## 1.17.17
+
+Bug Fixes:
+
+- Fix the regression for inheritance of cache variables and other inheritable fields. [#3603](https://github.com/microsoft/vscode-cmake-tools/issues/3603)
+
+## 1.17.16
+
+Bug Fixes:
+
+- Fix an issue where we weren't able to run tests when not using Presets. [#3589](https://github.com/microsoft/vscode-cmake-tools/issues/3589)
+- Fix the order of preference for CMake Presets `inherit` field. [#3594](https://github.com/microsoft/vscode-cmake-tools/issues/3594)
+
+## 1.17.15
+
+Features:
+
+- Update `api.ts` to add the `getActiveFolderPath` method. [#3528](https://github.com/microsoft/vscode-cmake-tools/pull/3528) [@Kemaweyan](https://github.com/Kemaweyan)
+- Add a setting that allows users to enable/disable the Test Explorer integration. [#3145](https://github.com/microsoft/vscode-cmake-tools/issues/3145)
+- Add support for CMake Presets V6 (package presets to run CPack and workflow presets). [#2871](https://github.com/microsoft/vscode-cmake-tools/issues/2871)
+- Add support for pinning CMake commands to the side bar. [#3296](https://github.com/microsoft/vscode-cmake-tools/issues/3296)
+
+Improvements:
+
+- Improve when the "Configure with Debugger" popup appears and allow for "Do Not Show Again". [#3343](https://github.com/microsoft/vscode-cmake-tools/issues/3343)
+- Add option to disable "Not all open documents were saved" popup. [#2889](https://github.com/microsoft/vscode-cmake-tools/issues/2889)
+- Allow overriding of CMakePresets cache variables and arguments. [#1836](https://github.com/microsoft/vscode-cmake-tools/issues/1836)
+- Improve advanced status bar options configuration by adding an `inherit` option to the `statusBarVisibility` setting and by adding the `inheritDefault` setting. Look at the CMake Options Visibility Configuration docs for more information. [#3452](https://github.com/microsoft/vscode-cmake-tools/issues/3452)
+
+Bug Fixes:
+
+- Fixed an issue where changing an empty value to a non-empty value using the Cache Editor UI didn't work. [PR #3508](https://github.com/microsoft/vscode-cmake-tools/pull/3508)
+- Fix CMakePresets inheritance for the `condition` field. [PR #3494](https://github.com/microsoft/vscode-cmake-tools/pull/3494)
+- Ensure that the output is cleared for `debugTarget` and `launchTarget`. [#3489](https://github.com/microsoft/vscode-cmake-tools/issues/3489)
+- Fix the inheritance of the `environment` for CMakePresets. [#3473](https://github.com/microsoft/vscode-cmake-tools/issues/3473)
+- Removed an unnecessary `console.assert` [#3474](https://github.com/microsoft/vscode-cmake-tools/issues/3474)
+- Avoid running tests after a build failure [#3366](https://github.com/microsoft/vscode-cmake-tools/issues/3366)
+- Make sure we clear the output on builds due to test when `Clear output before build` is enabled. [#1179](https://github.com/microsoft/vscode-cmake-tools/issues/1179)
+- Ensure that, when switching between presets, the CMake executable is modified. [#2791](https://github.com/microsoft/vscode-cmake-tools/issues/2791)
+- Fixed the key to reference the correct description for the `compact` option of the `cmake.options.advanced.variant.statusBarVisibility` setting. [#3511](https://github.com/microsoft/vscode-cmake-tools/issues/3511)
+- Fixed the parsing of C and CXX compiler cache variables when adding a new configure preset from existing compilers. [#2773](https://github.com/microsoft/vscode-cmake-tools/issues/2773)
+- Avoid the pitfalls of using `RegExp.exec()` in loops, replacing their usage with `string.matchAll()`. This change is applied to the expand.ts file which deals with expansion of variables in user provided strings. It may address the failures described in issue. [#3469](https://github.com/microsoft/vscode-cmake-tools/issues/3469)
+- Fixed `compile_commands.json` file corruption with `copyCompileCommands` when value is equal to default path. [#3214](https://github.com/microsoft/vscode-cmake-tools/issues/3214) [@parniere](https://github.com/parniere)
+- Fixed status bar visibility options' `inherit` option default. [PR #3579](https://github.com/microsoft/vscode-cmake-tools/pull/3579)
+
+## 1.16.32
+Improvements:
+
+- Improve our "smarts" when we attempt to provide PATH's for compilers or ninja. [PR #3458](https://github.com/microsoft/vscode-cmake-tools/pull/3458)
+
+## 1.16.31
+Bug Fixes:
+- Refactor our attempt to add VS paths to PATH for cl, clang, etc. so that we fix issues with using the wrong compiler. [PR #3449](https://github.com/microsoft/vscode-cmake-tools/pull/3449)
+
+## 1.16.30
+Bug Fixes:
+- Fixed an issue where finding cl.exe and ninja from Visual Studio was broken. [PR #3445](https://github.com/microsoft/vscode-cmake-tools/pull/3445)
+
+## 1.16.29
+Features:
+- Support different debug config for different targets. [PR #2801](https://github.com/microsoft/vscode-cmake-tools/pull/2801) [@RichardLuo0](https://github.com/RichardLuo0)
+- Add ability to get a test's `WORKING_DIRECTORY` in launch.json via `cmake.testWorkingDirectory` [PR #3336](https://github.com/microsoft/vscode-cmake-tools/pull/3336)
+
+Improvements:
+- Updated debugging documentation to add the LLDB configuration needed for macOS. [PR #3332](https://github.com/microsoft/vscode-cmake-tools/pull/3332) [@slhck](https://github.com/slhck)
+- In multi-root workspace, the Project Outline View now shows all configured projects. [PR #3270](https://github.com/microsoft/vscode-cmake-tools/pull/3270) [@vlavati](https://github.com/vlavati)
+- Added script mode and ability to connect to externally launched CMake processes. [PR #3277](https://github.com/microsoft/vscode-cmake-tools/pull/3277)
+- Added buttons to the project nodes in the Project Outline View. [PR #3354](https://github.com/microsoft/vscode-cmake-tools/pull/3354) [@vlavati](https://github.com/vlavati)
+- `$penv{}` macros are expanded in `include` paths in CMakePresets.json as long as `version` is 7 or higher. [#3310](https://github.com/microsoft/vscode-cmake-tools/issues/3310)
+- Disable search and select of CMakeLists.txt, if user chooses not to configure project without CMakeLists.txt in the root. [PR #3276](https://github.com/microsoft/vscode-cmake-tools/pull/3276) [@vlavati](https://github.com/vlavati)
+- If the "configure" button of CMakeLists.txt node in the Project Outline is clicked, only the corresponding project is configured. [PR #3372](https://github.com/microsoft/vscode-cmake-tools/pull/3372) [@vlavati](https://github.com/vlavati)
+- Added a command to directly open the extension settings (`CMake: Open CMake Tools Extension Settings`) and a gear icon button in the Project Status View title bar that calls it. [PR #3403](https://github.com/microsoft/vscode-cmake-tools/pull/3403)
+- Added an icon button in the Project Status View title bar that calls the `CMake: Delete Cache and Reconfigure` command. [PR #3403](https://github.com/microsoft/vscode-cmake-tools/pull/3403)
+- By default, all of the status bar options are hidden except `build`, `debug`, and `launch`. All of the previous status bar options are now, by default, visible in the Project Status View. These visibility settings can be customized in the `cmake.options.advanced` setting. This setting can also be accessed via the Project Status View. The `cmake.useProjectStatusView` setting is now removed. [PR #3407](https://github.com/microsoft/vscode-cmake-tools/pull/3407) & [PR #3417](https://github.com/microsoft/vscode-cmake-tools/pull/3417)
+
+Bug Fixes:
+- Fix Unhandled Exception if no args are specified in `cmake.getLaunchTargetFilename` inside an input context of a task. [PR #3348](https://github.com/microsoft/vscode-cmake-tools/issues/3348) [@vlavati](https://github.com/vlavati)
+- Fix incorrect IntelliSense configuration with default/empty `CMAKE_BUILD_TYPE` using CMakePresets. [PR #3363](https://github.com/microsoft/vscode-cmake-tools/pull/3363) [@deribaucourt](https://github.com/deribaucourt)
+- Paths containing `mingw` are no longer removed from the `PATH` environment variable because the selected MinGW kit is added before the `PATH` environment variable, rather than after. [#3220](https://github.com/microsoft/vscode-cmake-tools/issues/3220)
+- Fix a bug where `CMake: Show Configure` or `CMake: Show Build` commands would run them. [#3381](https://github.com/microsoft/vscode-cmake-tools/issues/3381) [@AbdullahAmrSobh](https://github.com/AbdullahAmrSobh)
+
+## 1.15.31
 Features:
 - Added support for the CMake Debugger. [#3093](https://github.com/microsoft/vscode-cmake-tools/issues/3093)
+- Added support for passing a folder parameter to the `cmake.selectActiveFolder` command. [#3256](https://github.com/microsoft/vscode-cmake-tools/issues/3256) [@cvanbeek](https://github.com/cvanbeek13)
+
+Improvements:
+- When using CMake presets, the Project Status View now shows the build target along with the build preset. [PR #3241](https://github.com/microsoft/vscode-cmake-tools/pull/3241)
+- IntelliSense resolves headers coming from MacOS frameworks. CMake 3.27 or later is required. [#2324](https://github.com/microsoft/vscode-cmake-tools/issues/2324)
+- Allow configure settings to override the usual arguments the extension is usually passing to cmake. Don't have unremovable options. [#1639](https://github.com/microsoft/vscode-cmake-tools/issues/1639)
+- Allow a way to run CTests in parallel by setting `cmake.ctest.allowParallelJobs` to `true`. [#3091](https://github.com/microsoft/vscode-cmake-tools/issues/3091)
+- When clicking `Run CTests` from the status bar view, it now will bypass the Test Explorer and directly run the CTests. [#3151](https://github.com/microsoft/vscode-cmake-tools/issues/3151)
+
+Bug Fixes:
+- Fix per-folder browse configurations returning incorrect information. [#3155](https://github.com/microsoft/vscode-cmake-tools/issues/3155)
+- Fix triggers of "Bad CMake Executable" error message. [#2368](https://github.com/microsoft/vscode-cmake-tools/issues/2368)
+- Don't ignore empty cache string variables when configuring from presets. [#1842](https://github.com/microsoft/vscode-cmake-tools/issues/1842)
+- Fix active build configuration warning coming from CppTools. [#2353](https://github.com/microsoft/vscode-cmake-tools/issues/2353)
+- Fix our checking for invalid settings when CMakeUserPresets version is different than CMakePresets. [#2897](https://github.com/microsoft/vscode-cmake-tools/issues/2897)
+- Fix the precendence order that we evaluate the `cmake.parallelJobs` setting. [#3206](https://github.com/microsoft/vscode-cmake-tools/issues/3206)
+- Decreased the number of cases where we reconfigure erroneously upon usage of `cmake.getLaunchTargetPath`. [#2878](https://github.com/microsoft/vscode-cmake-tools/issues/2878)
 
 ## 1.14.33
 Bug Fixes:
