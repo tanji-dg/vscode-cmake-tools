@@ -1,0 +1,4 @@
+* eol=lf
+*.png binary
+*.exe binary
+*.tgz binary
