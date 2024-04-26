@@ -162,5 +162,7 @@
 	"create.cpp": "C++ プロジェクトの作成",
 	"create.c": "C プロジェクトの作成",
 	"create.library": "ライブラリの作成",
-	"create.executable": "実行可能ファイルの作成"
+	"create.executable": "実行可能ファイルの作成",
+	"no.custom.task": "タスクがみつかりません: {0}",
+	"no.launch.config": "デバッグ構成がみつかりません。"
 }

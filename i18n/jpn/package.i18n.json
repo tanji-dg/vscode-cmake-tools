@@ -70,6 +70,7 @@
 	"cmake-tools.command.cmake.debugTargetAll.title": "すべてのプロジェクトのデバッグ",
 	"cmake-tools.command.cmake.launchTarget.title": "デバッグなしで実行",
 	"cmake-tools.command.cmake.launchTargetAll.title": "デバッグなしですべてのプロジェクトを実行",
+	"cmake-tools.command.cmake.stopTarget.title": "停止",
 	"cmake-tools.command.cmake.selectLaunchTarget.title": "デバッグ ターゲットの設定",
 	"cmake-tools.command.cmake.stop.title": "ビルドをキャンセル",
 	"cmake-tools.command.cmake.stopAll.title": "すべてのプロジェクトのビルドをキャンセル",
@@ -244,4 +245,7 @@
 	"cmake-tools.command.cmake.projectStatus.selectTestPreset.title": "テストの対象の設定",
 	"cmake-tools.command.cmake.projectStatus.openVisibilitySettings.title": "表示範囲設定を開く",
 	"cmake-tools.debugger.label": "CMake デバッガー"
+	"cmake-tools.configuration.cmake.customTasks.description": "cmakeの動作に併せて実行されるタスクを指定します。",
+	"cmake-tools.configuration.cmake.debugConfigName.description": "指定した名称の構成でデバッグします。",
+	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "既定の起動またはデバッグターゲットを指定します。"
 }
