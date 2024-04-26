@@ -3709,7 +3709,7 @@
     "@types/tmp": "^0.2.0",
     "@types/vscode": "1.63.0",
     "@types/which": "~2.0.0",
-    "@types/xml2js": "^0.4.8",
+    "@types/xml2js": "0.4.14",
     "@types/uuid": "~8.3.3",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/eslint-plugin-tslint": "^5.25.0",
@@ -3767,7 +3767,7 @@
     "vscode-nls": "^5.0.0",
     "vscode-tas-client": "^0.1.45",
     "which": "~2.0.2",
-    "xml2js": "^0.4.23",
+    "xml2js": "0.4.23",
     "uuid": "~8.3.2"
   },
   "resolutions": {
@@ -3780,7 +3780,7 @@
     "nanoid": "^3.1.31",
     "postcss": "^8.2.10",
     "yargs-parser": "^20.2.4",
-    "xml2js": "^0.5.0",
+    "xml2js": "0.4.23",
     "tsconfig-paths*/json5": "^1.0.2",
     "minimatch": "^3.0.5"
   }, 
