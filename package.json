@@ -3601,7 +3601,7 @@
           "default": true,
           "description": "%cmake-tools.configuration.cmake.enableAutomaticKitScan.description%",
           "scope": "resource"
-        }
+        },
         "cmake.customTasks": {
           "type": "object",
           "properties": {
