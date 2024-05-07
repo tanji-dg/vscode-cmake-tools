@@ -157,7 +157,7 @@ export class ProjectController implements vscode.Disposable {
             this.activeWorkflowPresetSub = project.onActiveWorkflowPresetChanged(FireNow, () => void this.projectStatus.refresh());
             this.isBusySub = project.onIsBusyChanged(FireNow, (isBusy) => void this.projectStatus.setIsBusy(isBusy));
             await setContextAndStore(ext.hideBuildCommandKey, project.hideBuildButton);
-            await setContextAndStore(ext.hideReuildCommandKey, project.hideReuildButton);
+            await setContextAndStore(ext.hideRebuildCommandKey, project.hideRebuildButton);
             await setContextAndStore(ext.hideDebugCommandKey, project.hideDebugButton);
             await setContextAndStore(ext.hideLaunchCommandKey, project.hideLaunchButton);
         }
@@ -482,7 +482,7 @@ export class ProjectController implements vscode.Disposable {
         }
         await this.projectStatus.doStatusChange(options);
         await setContextAndStore(ext.hideBuildCommandKey, (options.advanced?.build?.statusBarVisibility === "hidden" && options?.advanced?.build?.projectStatusVisibility === "hidden") ? true : false);
-        await setContextAndStore(ext.hideReuildCommandKey, (options.advanced?.rebuild?.statusBarVisibility === "hidden" && options?.advanced?.rebuild?.projectStatusVisibility === "hidden") ? true : false);
+        await setContextAndStore(ext.hideRebuildCommandKey, (options.advanced?.rebuild?.statusBarVisibility === "hidden" && options?.advanced?.rebuild?.projectStatusVisibility === "hidden") ? true : false);
         await setContextAndStore(ext.hideDebugCommandKey, (options.advanced?.debug?.statusBarVisibility === "hidden" && options?.advanced?.debug?.projectStatusVisibility === "hidden") ? true : false);
         await setContextAndStore(ext.hideLaunchCommandKey, (options.advanced?.launch?.statusBarVisibility === "hidden" && options?.advanced?.launch?.projectStatusVisibility === "hidden") ? true : false);
     }
