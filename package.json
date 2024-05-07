@@ -58,6 +58,7 @@
     "onDebugInitialConfigurations",
     "onDebugDynamicConfigurations:cmake",
     "workspaceContains:CMakeLists.txt",
+    "workspaceContains:CMakePresets.json",
     "workspaceContains:*/CMakeLists.txt",
     "workspaceContains:*/*/CMakeLists.txt",
     "workspaceContains:*/*/*/CMakeLists.txt",
@@ -761,6 +762,12 @@
         "category": "CMake"
       },
       {
+        "command": "cmake.stopTarget",
+        "title": "%cmake-tools.command.cmake.stopTarget.title%",
+        "when": "cmake:enableFullFeatureSet",
+        "category": "CMake"
+      },
+      {
         "command": "cmake.selectLaunchTarget",
         "title": "%cmake-tools.command.cmake.selectLaunchTarget.title%",
         "when": "cmake:enableFullFeatureSet",
@@ -1137,6 +1144,10 @@
         {
           "command": "cmake.openCMakePresets",
           "when": "cmake:enableFullFeatureSet && useCMakePresets"
+        },
+        {
+          "command": "cmake.stopTarget",
+          "when": "cmake:enableFullFeatureSet"
         },
         {
           "command": "cmake.addConfigurePreset",
@@ -2047,7 +2058,7 @@
           "type": "boolean",
           "default": true,
           "description": "%cmake-tools.configuration.cmake.autoSelectActiveFolder.description%",
-          "scope": "window"
+          "scope": "resource"
         },
         "cmake.cmakePath": {
           "type": "string",
@@ -3650,6 +3661,55 @@
           "type": "string",
           "description": "%cmake-tools.configuration.cmake.defaultLaunchTarget.description%",
           "scope": "resource"
+        },
+        "cmake.customTasks": {
+          "type": "object",
+          "properties": {
+            "launch": {
+              "type": "object",
+              "properties": {
+                "preBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
+                },
+                "postBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.postBuild.description%"
+                }
+              },
+              "description": "%cmake-tools.configuration.cmake.customTasks.launch.debug.description%"
+            },
+            "debug": {
+              "type": "object",
+              "properties": {
+                "preBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
+                },
+                "postBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.postBuild.description%"
+                }
+              },
+              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.debug.description%"
+            },
+            "stop": {
+              "type": "string",
+              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.stop.description%"
+            }
+          },
+          "description": "%cmake-tools.configuration.cmake.customTasks.description%",
+          "scope": "resource"
+        },
+        "cmake.debugConfigName": {
+          "type": "string",
+          "description": "%cmake-tools.configuration.cmake.debugConfigName.description%",
+          "scope": "resource"
+        },
+        "cmake.defaultLaunchTarget": {
+          "type": "string",
+          "description": "%cmake-tools.configuration.cmake.defaultLaunchTarget.description%",
+          "scope": "resource"
         }
       }
     },
@@ -3793,6 +3853,7 @@
     "chai": "^4.3.0",
     "chai-as-promised": "^7.1.1",
     "chai-string": "^1.5.0",
+    "del": "^6.0.0",
     "eslint": "^8.15.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsdoc": "^39.6.4",
@@ -3811,6 +3872,7 @@
     "module-alias": "^2.2.2",
     "node-loader": "^1.0.2",
     "parse-git-config": "^3.0.0",
+    "run-sequence": "^2.2.1",
     "sinon": "~9.2.4",
     "ts-loader": "^8.0.17",
     "ts-node": "^9.1.1",
@@ -3837,7 +3899,6 @@
     "rimraf": "^3.0.2",
     "string.prototype.matchall": "^4.0.10",
     "tmp": "^0.2.1",
-    "uuid": "~8.3.2",
     "vscode-cpptools": "^6.1.0",
     "@vscode/extension-telemetry": "^0.6.2",
     "vscode-nls": "git+https://github.com/tanji-dg/vscode-nls.git#v5.0.0",

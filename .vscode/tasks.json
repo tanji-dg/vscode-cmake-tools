@@ -4,7 +4,7 @@
         {
             "label": "build-with-webpack-watch",
             "type": "npm",
-            "script": "compile-watch-fast",
+            "script": "compile",
             "problemMatcher": [
                 {
                     "owner": "typescript",

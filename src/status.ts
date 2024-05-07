@@ -413,7 +413,7 @@ class LaunchButton extends ControlButton {
         super(config, priority);
         this.command = 'cmake.launchTarget';
         this.icon = 'play';
-        this.tooltip = localize('launch.tooltip', 'Launch the selected target');
+        this.tooltip = localize('launch.tooltip', 'Launch the selected target in the terminal window');
     }
 }
 

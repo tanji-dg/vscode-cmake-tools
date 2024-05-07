@@ -14,7 +14,7 @@
 	"set.active.target.tooltip": "既定のビルド ターゲットの設定",
 	"select.target.tooltip": "起動するターゲットを選択します",
 	"launch.debugger.tooltip": "選択したターゲットのデバッガーを起動します",
-	"launch.tooltip": "選択したターゲットを起動します",
+	"launch.tooltip": "選択したターゲットをターミナル ウィンドウで起動します",
 	"restart.tooltip": "選択したターゲットを再起動します",
 	"stop.tooltip": "選択したターゲットを停止します",
 	"run.ctest.tests.tooltip": "CTest テストを実行します",

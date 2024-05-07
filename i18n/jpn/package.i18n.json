@@ -244,7 +244,7 @@
 	"cmake-tools.command.cmake.projectStatus.cleanConfigure.title": "キャッシュの削除と再構成",
 	"cmake-tools.command.cmake.projectStatus.selectTestPreset.title": "テストの対象の設定",
 	"cmake-tools.command.cmake.projectStatus.openVisibilitySettings.title": "表示範囲設定を開く",
-	"cmake-tools.debugger.label": "CMake デバッガー"
+	"cmake-tools.debugger.label": "CMake デバッガー",
 	"cmake-tools.configuration.cmake.customTasks.description": "cmakeの動作に併せて実行されるタスクを指定します。",
 	"cmake-tools.configuration.cmake.debugConfigName.description": "指定した名称の構成でデバッグします。",
 	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "既定の起動またはデバッグターゲットを指定します。"

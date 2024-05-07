@@ -3,4 +3,3 @@
 *.exe binary
 *.tgz binary
 **/vscode-nls.git* binary
-

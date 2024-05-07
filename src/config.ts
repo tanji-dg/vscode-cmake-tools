@@ -558,7 +558,6 @@ export class ConfigurationReader implements vscode.Disposable {
         return this.configData.enableAutomaticKitScan;
     }
 
- 
     get customTasks(): {[key: string]: string | {[key: string]: {[key: string]: string}}} {
         return this.configData.customTasks;
     }
