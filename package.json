@@ -3607,58 +3607,6 @@
           "description": "%cmake-tools.configuration.cmake.enableAutomaticKitScan.description%",
           "scope": "resource"
         },
-<<<<<<< HEAD
-        "cmake.customTasks": {
-          "type": "object",
-          "properties": {
-            "launch": {
-              "type": "object",
-              "properties": {
-                "preBuild": {
-                  "type": "string",
-                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
-                },
-                "postBuild": {
-                  "type": "string",
-                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.postBuild.description%"
-                }
-              },
-              "description": "%cmake-tools.configuration.cmake.customTasks.launch.debug.description%"
-            },
-            "debug": {
-              "type": "object",
-              "properties": {
-                "preBuild": {
-                  "type": "string",
-                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
-                },
-                "postBuild": {
-                  "type": "string",
-                  "description": "%cmake-tools.configuration.cmake.customTasks.postBuild.description%"
-                }
-              },
-              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.debug.description%"
-            },
-            "stop": {
-              "type": "string",
-              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.stop.description%"
-            }
-          },
-          "description": "%cmake-tools.configuration.cmake.customTasks.description%",
-          "scope": "resource"
-        },
-        "cmake.debugConfigName": {
-          "type": "string",
-          "description": "%cmake-tools.configuration.cmake.debugConfigName.description%",
-          "scope": "resource"
-        },
-        "cmake.defaultLaunchTarget": {
-          "type": "string",
-          "description": "%cmake-tools.configuration.cmake.defaultLaunchTarget.description%",
-          "scope": "resource"
-        },
-=======
->>>>>>> 9e23a43106fc9fa0dcd220f75ed6bbcb9e09186c
         "cmake.customTasks": {
           "type": "object",
           "properties": {
@@ -3894,16 +3842,12 @@
     "rimraf": "^3.0.2",
     "string.prototype.matchall": "^4.0.10",
     "tmp": "^0.2.1",
-<<<<<<< HEAD
-=======
-    "uuid": "~8.3.2",
->>>>>>> 9e23a43106fc9fa0dcd220f75ed6bbcb9e09186c
     "vscode-cpptools": "^6.1.0",
     "@vscode/extension-telemetry": "^0.6.2",
     "vscode-nls": "git+https://github.com/tanji-dg/vscode-nls.git#v5.0.0",
     "vscode-tas-client": "^0.1.45",
     "which": "~2.0.2",
-    "xml2js": "^0.4.23",
+    "xml2js": "^0.5.0",
     "uuid": "~8.3.2"
   },
   "resolutions": {
