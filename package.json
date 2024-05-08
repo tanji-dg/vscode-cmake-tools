@@ -3865,5 +3865,6 @@
     "tsconfig-paths*/json5": "^1.0.2",
     "minimatch": "^3.0.5"
   }, 
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@1.22.19",
+  "enabledApiProposals": ["extensionRuntime"]
 }
