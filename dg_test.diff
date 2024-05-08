@@ -1,0 +1,1094 @@
+diff --git a/.gitattributes b/.gitattributes
+index faad2838..324d2d74 100644
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -1,4 +1,3 @@
+ * eol=lf
+ *.png   binary
+-*.exe binary
+-*.tgz filter=lfs diff=lfs merge=lfs -text
++*.exe binary
+\ No newline at end of file
+diff --git a/.vscode/tasks.json b/.vscode/tasks.json
+index 8f84d5ca..cf08d9c0 100644
+--- a/.vscode/tasks.json
++++ b/.vscode/tasks.json
+@@ -4,7 +4,7 @@
+         {
+             "label": "build-with-webpack-watch",
+             "type": "npm",
+-            "script": "compile",
++            "script": "compile-watch-fast",
+             "problemMatcher": [
+                 {
+                     "owner": "typescript",
+diff --git a/conv.sh b/conv.sh
+new file mode 100755
+index 00000000..f8c8579e
+--- /dev/null
++++ b/conv.sh
+@@ -0,0 +1,6 @@
++#!/bin/bash
++cd out
++for i in $( find src -name '*.js'); do
++    awk -f ../nls.awk $i > $i.t
++    mv $i.t $i
++done
+\ No newline at end of file
+diff --git a/gulpfile.js b/gulpfile.js
+index 10ea4e5b..fbd00818 100644
+--- a/gulpfile.js
++++ b/gulpfile.js
+@@ -142,7 +142,7 @@ gulp.task("translations-export", (done) => {
+     .pipe(filter(['**/*.nls.json', '**/*.nls.metadata.json']))
+ 
+     // Consoldate them into nls.metadata.json, which the xlf is built from.
+-    .pipe(nls.bundleMetaDataFiles('ms-vscode.cmake-tools', '.'))
++    .pipe(nls.bundleMetaDataFiles('ms-vscode.cmake-tools-dg', '.'))
+ 
+     // filter down to just the resulting metadata files
+     .pipe(filter(['**/nls.metadata.header.json', '**/nls.metadata.json']))
+@@ -208,7 +208,7 @@ const generatedSrcLocBundle = () => {
+         .pipe(tsProject()).js
+         .pipe(nls.createMetaDataFiles())
+         .pipe(nls.createAdditionalLanguageFiles(languages, "i18n"))
+-        .pipe(nls.bundleMetaDataFiles('ms-vscode.cmake-tools', 'dist'))
++        .pipe(nls.bundleMetaDataFiles('ms-vscode.cmake-tools-dg', 'dist'))
+         .pipe(nls.bundleLanguageFiles())
+         .pipe(filter(['**/nls.bundle.*.json', '**/nls.metadata.header.json', '**/nls.metadata.json']))
+         .pipe(gulp.dest('dist'));
+diff --git a/gulpfile_nls.js b/gulpfile_nls.js
+new file mode 100644
+index 00000000..fdf778f6
+--- /dev/null
++++ b/gulpfile_nls.js
+@@ -0,0 +1,85 @@
++/*---------------------------------------------------------------------------------------------
++ *  Copyright (c) Microsoft Corporation. All rights reserved.
++ *  Licensed under the MIT License. See License.txt in the project root for license information.
++ *--------------------------------------------------------------------------------------------*/
++
++const gulp = require('gulp');
++const path = require('path');
++
++const ts = require('gulp-typescript');
++const typescript = require('typescript');
++const sourcemaps = require('gulp-sourcemaps');
++const del = require('del');
++const runSequence = require('run-sequence');
++const es = require('event-stream');
++const vsce = require('vsce');
++const nls = require('vscode-nls-dev');
++
++const tsProject = ts.createProject('./tsconfig.json', { typescript });
++
++const inlineMap = true;
++const inlineSource = false;
++const outDest = 'out';
++
++const languages = [{ folderName: 'jpn', id: 'ja' }];
++
++const cleanTask = function() {
++	return del(['out/**', 'package.nls.*.json', 'i18n-sample*.vsix']);
++}
++
++const internalCompileTask = function() {
++	return doCompile(false);
++};
++
++const internalNlsCompileTask = function() {
++	return doCompile(true);
++};
++
++const addI18nTask = function() {
++	return gulp.src(['package.nls.json'])
++		.pipe(nls.createAdditionalLanguageFiles(languages, 'i18n'))
++		.pipe(gulp.dest('.'));
++};
++
++const buildTask = gulp.series(cleanTask, internalNlsCompileTask, addI18nTask);
++
++const doCompile = function (buildNls) {
++	var r = tsProject.src()
++		.pipe(sourcemaps.init())
++		.pipe(tsProject()).js
++		.pipe(buildNls ? nls.rewriteLocalizeCalls() : es.through())
++		.pipe(buildNls ? nls.createAdditionalLanguageFiles(languages, 'i18n', 'out') : es.through());
++
++	if (inlineMap && inlineSource) {
++		r = r.pipe(sourcemaps.write());
++	} else {
++		r = r.pipe(sourcemaps.write("../out", {
++			// no inlined source
++			includeContent: inlineSource,
++			// Return relative source map root directories per file.
++			sourceRoot: "../src"
++		}));
++	}
++
++	return r.pipe(gulp.dest(outDest));
++}
++
++const vscePublishTask = function() {
++	return vsce.publish();
++};
++
++const vscePackageTask = function() {
++	return vsce.createVSIX();
++};
++
++gulp.task('default', buildTask);
++
++gulp.task('clean', cleanTask);
++
++gulp.task('compile', gulp.series(cleanTask, internalCompileTask));
++
++gulp.task('build', buildTask);
++
++gulp.task('publish', gulp.series(buildTask, vscePublishTask));
++
++gulp.task('package', gulp.series(buildTask, vscePackageTask));
+diff --git a/i18n/jpn/package.i18n.json b/i18n/jpn/package.i18n.json
+index b43b1307..94b3ae8d 100644
+--- a/i18n/jpn/package.i18n.json
++++ b/i18n/jpn/package.i18n.json
+@@ -58,6 +58,7 @@
+ 	"cmake-tools.command.cmake.debugTargetAll.title": "すべてのプロジェクトのデバッグ",
+ 	"cmake-tools.command.cmake.launchTarget.title": "デバッグなしで実行",
+ 	"cmake-tools.command.cmake.launchTargetAll.title": "デバッグなしですべてのプロジェクトを実行",
++	"cmake-tools.command.cmake.stopTarget.title": "停止",
+ 	"cmake-tools.command.cmake.selectLaunchTarget.title": "デバッグ ターゲットの設定",
+ 	"cmake-tools.command.cmake.stop.title": "ビルドをキャンセル",
+ 	"cmake-tools.command.cmake.stopAll.title": "すべてのプロジェクトのビルドをキャンセル",
+@@ -65,7 +66,7 @@
+ 	"cmake-tools.command.cmake.selectActiveFolder.title": "アクティブなフォルダーの選択",
+ 	"cmake-tools.command.cmake.outline.runUtilityTarget.title": "ユーティリティの実行",
+ 	"cmake-tools.command.cmake.outline.debugTarget.title": "デバッグ",
+-	"cmake-tools.command.cmake.outline.launchTarget.title": "ターミナルで実行する",
++	"cmake-tools.command.cmake.outline.launchTarget.title": "実行",
+ 	"cmake-tools.command.cmake.outline.setDefaultTarget.title": "ビルド ターゲットとして設定",
+ 	"cmake-tools.command.cmake.outline.setLaunchTarget.title": "起動またはデバッグ ターゲットとして設定",
+ 	"cmake-tools.command.cmake.outline.revealInCMakeLists.title": "CMakeLists.txt を開く",
+@@ -183,5 +184,8 @@
+ 	"cmake-tools.configuration.cmake.loadCompileCommands.description": "拡張子が単一ファイルのコンパイルを有効にするために compile_commands.json を読み取るかどうかを制御します。",
+ 	"cmake-tools.command.cmake.projectStatus.update.title": "プロジェクトの状態を最新の情報に更新",
+ 	"cmake-tools.command.cmake.projectStatus.selectTestPreset.title": "テストの対象の設定",
+-	"cmake-tools.debugger.label": "CMake デバッガー"
++	"cmake-tools.debugger.label": "CMake デバッガー",
++	"cmake-tools.configuration.cmake.customTasks.description": "cmakeの動作に併せて実行されるタスクを指定します。",
++	"cmake-tools.configuration.cmake.debugConfigName.description": "指定した名称の構成でデバッグします。",
++	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "既定の起動またはデバッグターゲットを指定します。"
+ }
+\ No newline at end of file
+diff --git a/i18n/jpn/src/cmakeProject.i18n.json b/i18n/jpn/src/cmakeProject.i18n.json
+index 6190147f..bb4c6e90 100644
+--- a/i18n/jpn/src/cmakeProject.i18n.json
++++ b/i18n/jpn/src/cmakeProject.i18n.json
+@@ -145,5 +145,7 @@
+ 	"create.cpp": "C++ プロジェクトの作成",
+ 	"create.c": "C プロジェクトの作成",
+ 	"create.library": "ライブラリの作成",
+-	"create.executable": "実行可能ファイルの作成"
++	"create.executable": "実行可能ファイルの作成",
++	"no.custom.task": "タスクがみつかりません: {0}",
++	"no.launch.config": "デバッグ構成がみつかりません。"
+ }
+\ No newline at end of file
+diff --git a/i18n/jpn/src/status.i18n.json b/i18n/jpn/src/status.i18n.json
+index 9fbf9538..84b707c2 100644
+--- a/i18n/jpn/src/status.i18n.json
++++ b/i18n/jpn/src/status.i18n.json
+@@ -14,7 +14,9 @@
+ 	"set.active.target.tooltip": "既定のビルド ターゲットの設定",
+ 	"select.target.tooltip": "起動するターゲットを選択します",
+ 	"launch.debugger.tooltip": "選択したターゲットのデバッガーを起動します",
+-	"launch.tooltip": "選択したターゲットをターミナル ウィンドウで起動します",
++	"launch.tooltip": "選択したターゲットを起動します",
++	"restart.tooltip": "選択したターゲットを再起動します",
++	"stop.tooltip": "選択したターゲットを停止します",
+ 	"run.ctest.tests.tooltip": "CTest テストを実行します",
+ 	"run.ctest": "CTest の実行",
+ 	"build.tooltip": "選択したターゲットをビルドします",
+diff --git a/nls.awk b/nls.awk
+new file mode 100644
+index 00000000..334cf598
+--- /dev/null
++++ b/nls.awk
+@@ -0,0 +1,13 @@
++/nls\.config/ {
++     sub("\\.[^.]+$", "", FILENAME);
++     printf "nls.config({ messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFormat.standalone })(__filename, \"%s\");\n", FILENAME;
++     next
++}
++/nls\.loadMessageBundle/ {
++     sub("\\.[^.]+$", "", FILENAME);
++     printf "const localize = nls.loadMessageBundle(__filename, \"%s\");\n", FILENAME;
++     next
++}
++{
++    print
++}
+\ No newline at end of file
+diff --git a/package.json b/package.json
+index a556aa61..6a513eb0 100644
+--- a/package.json
++++ b/package.json
+@@ -1,8 +1,8 @@
+ {
+-  "name": "cmake-tools",
+-  "displayName": "CMake Tools",
++  "name": "cmake-tools-dg",
++  "displayName": "CMake Tools for Daitogiken",
+   "description": "Extended CMake support in Visual Studio Code",
+-  "version": "1.13.0",
++  "version": "1.1.1",
+   "publisher": "ms-vscode",
+   "repository": {
+     "type": "git",
+@@ -50,6 +50,7 @@
+     "onCommand:cmake.buildKit",
+     "onCommand:cmake.tasksBuildCommand",
+     "workspaceContains:CMakeLists.txt",
++    "workspaceContains:CMakePresets.json",
+     "workspaceContains:*/CMakeLists.txt",
+     "workspaceContains:*/*/CMakeLists.txt",
+     "workspaceContains:*/*/*/CMakeLists.txt",
+@@ -585,6 +586,12 @@
+         "when": "cmake:enableFullFeatureSet",
+         "category": "CMake"
+       },
++      {
++        "command": "cmake.stopTarget",
++        "title": "%cmake-tools.command.cmake.stopTarget.title%",
++        "when": "cmake:enableFullFeatureSet",
++        "category": "CMake"
++      },
+       {
+         "command": "cmake.selectLaunchTarget",
+         "title": "%cmake-tools.command.cmake.selectLaunchTarget.title%",
+@@ -653,7 +660,7 @@
+         "when": "cmake:enableFullFeatureSet",
+         "title": "%cmake-tools.command.cmake.projectStatus.update.title%",
+         "category": "CMake",
+-        "icon": "$(refresh)"      
++        "icon": "$(refresh)"
+       }
+     ],
+     "taskDefinitions": [
+@@ -712,43 +719,43 @@
+       }
+     ],
+     "breakpoints": [
+-        {
+-            "language": "cmake"
+-        }
++      {
++        "language": "cmake"
++      }
+     ],
+     "debuggers": [
+-        {
+-            "type": "cmake",
+-            "label": "%cmake-tools.debugger.label%",
+-            "configurationAttributes": {
+-                "launch": {
+-                    "required": [
+-                        "debuggerPipeName"
+-                    ],
+-                    "properties": {
+-                        "debuggerPipeName": {
+-                            "type": "string",
+-                            "description": "Name of the named piped that the debugger will communicate with CMake over"
+-                        },
+-                        "cleanConfigure": {
+-                            "type": "boolean",
+-                            "description": "Clean prior to configuring",
+-                            "default": false
+-                        },
+-                        "configureAll": {
+-                            "type": "boolean",
+-                            "description": "Define whether we configure for all projects",
+-                            "default": false
+-                        },
+-                        "debuggerDapLog": {
+-                            "type": "string",
+-                            "description": "File to log dap log to",
+-                            "default": ""
+-                        } 
+-                    }
+-                }
++      {
++        "type": "cmake",
++        "label": "%cmake-tools.debugger.label%",
++        "configurationAttributes": {
++          "launch": {
++            "required": [
++              "debuggerPipeName"
++            ],
++            "properties": {
++              "debuggerPipeName": {
++                "type": "string",
++                "description": "Name of the named piped that the debugger will communicate with CMake over"
++              },
++              "cleanConfigure": {
++                "type": "boolean",
++                "description": "Clean prior to configuring",
++                "default": false
++              },
++              "configureAll": {
++                "type": "boolean",
++                "description": "Define whether we configure for all projects",
++                "default": false
++              },
++              "debuggerDapLog": {
++                "type": "string",
++                "description": "File to log dap log to",
++                "default": ""
++              }
+             }
++          }
+         }
++      }
+     ],
+     "menus": {
+       "commandPalette": [
+@@ -876,7 +883,7 @@
+           "when": "cmake:multiProject"
+         },
+         {
+-          "command": "cmake.cleanConfigureWithDebugger", 
++          "command": "cmake.cleanConfigureWithDebugger",
+           "when": "vscode-cmake-tools.cmakeDebuggerAvailable"
+         },
+         {
+@@ -943,6 +950,10 @@
+           "command": "cmake.launchTargetAll",
+           "when": "cmake:multiProject && !cmake:hideLaunchCommand && cmake:enableFullFeatureSet"
+         },
++        {
++          "command": "cmake.stopTarget",
++          "when": "cmake:enableFullFeatureSet"
++        },
+         {
+           "when": "cmake:enableFullFeatureSet",
+           "command": "cmake.selectLaunchTarget"
+@@ -1472,7 +1483,7 @@
+           "type": "boolean",
+           "default": true,
+           "description": "%cmake-tools.configuration.cmake.autoSelectActiveFolder.description%",
+-          "scope": "window"
++          "scope": "resource"
+         },
+         "cmake.cmakePath": {
+           "type": "string",
+@@ -2461,6 +2472,55 @@
+           "default": true,
+           "description": "%cmake-tools.configuration.cmake.automaticReconfigure.description%",
+           "scope": "resource"
++        },
++        "cmake.customTasks": {
++          "type": "object",
++          "properties": {
++            "launch": {
++              "type": "object",
++              "properties": {
++                "preBuild": {
++                  "type": "string",
++                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
++                },
++                "postBuild": {
++                  "type": "string",
++                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.postBuild.description%"
++                }
++              },
++              "description": "%cmake-tools.configuration.cmake.customTasks.launch.debug.description%"
++            },
++            "debug": {
++              "type": "object",
++              "properties": {
++                "preBuild": {
++                  "type": "string",
++                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
++                },
++                "postBuild": {
++                  "type": "string",
++                  "description": "%cmake-tools.configuration.cmake.customTasks.postBuild.description%"
++                }
++              },
++              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.debug.description%"
++            },
++            "stop": {
++              "type": "string",
++              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.stop.description%"
++            }
++          },
++          "description": "%cmake-tools.configuration.cmake.customTasks.description%",
++          "scope": "resource"
++        },
++        "cmake.debugConfigName": {
++          "type": "string",
++          "description": "%cmake-tools.configuration.cmake.debugConfigName.description%",
++          "scope": "resource"
++        },
++        "cmake.defaultLaunchTarget": {
++          "type": "string",
++          "description": "%cmake-tools.configuration.cmake.defaultLaunchTarget.description%",
++          "scope": "resource"
+         }
+       }
+     },
+@@ -2484,6 +2544,11 @@
+         "key": "shift+f5",
+         "command": "cmake.launchTarget",
+         "when": "!inDebugMode && !cmake:hideDebugCommand && cmake:enableFullFeatureSet"
++      },
++      {
++        "key": "ctrl+f7",
++        "when": "!cmake:hideBuildCommand && cmake:enableFullFeatureSet",
++        "command": "cmake.stopTarget"
+       }
+     ],
+     "viewsContainers": {
+@@ -2544,14 +2609,16 @@
+     "@test": "out/test/"
+   },
+   "scripts": {
+-    "vscode:prepublish": "yarn run compile-production",
+-    "compile": "yarn install && webpack --mode development",
+-    "compile-watch": "yarn install && webpack --mode development --watch --progress",
+-    "compile-production": "yarn install && yarn run translations-generate && webpack --env BUILD_VSCODE_NLS=true --mode production",
++    "vscode:prepublish": "npm run compile-production",
++    "compile": "npm install && webpack --mode development",
++    "compile-watch": "npm install && webpack --mode development --watch --progress",
++    "compile-watch-fast": "webpack --mode development --watch --progress",
++    "compile-production": "npm install && npm run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
++    "compile-production-fast": "npm run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
+     "translations-export": "gulp translations-export",
+     "translations-generate": "gulp translations-generate",
+     "translations-import": "gulp translations-import",
+-    "package": "vsce package --yarn -o cmake-tools.vsix",
++    "package": "vsce package --no-yarn",
+     "pretest": "tsc -p test.tsconfig.json",
+     "lint": "gulp lint",
+     "smokeTests": "yarn run pretest && node ./out/test/smoke/badProject/runTest.js && node ./out/test/smoke/goodProject/runTest.js && node ./out/test/smoke/noCtest/runTest.js",
+@@ -2574,10 +2641,10 @@
+     "@types/rimraf": "^3.0.0",
+     "@types/sinon": "~9.0.10",
+     "@types/tmp": "^0.2.0",
++    "@types/uuid": "~8.3.3",
+     "@types/vscode": "1.60.0",
+     "@types/which": "~2.0.0",
+     "@types/xml2js": "^0.4.8",
+-    "@types/uuid": "~8.3.3",
+     "@typescript-eslint/eslint-plugin": "^5.25.0",
+     "@typescript-eslint/eslint-plugin-tslint": "^5.25.0",
+     "@typescript-eslint/parser": "^5.25.0",
+@@ -2585,6 +2652,7 @@
+     "chai": "^4.3.0",
+     "chai-as-promised": "^7.1.1",
+     "chai-string": "^1.5.0",
++    "del": "^6.0.0",
+     "eslint": "^8.15.0",
+     "eslint-plugin-import": "^2.26.0",
+     "eslint-plugin-jsdoc": "^39.6.4",
+@@ -2603,6 +2671,7 @@
+     "module-alias": "^2.2.2",
+     "node-loader": "^1.0.2",
+     "parse-git-config": "^3.0.0",
++    "run-sequence": "^2.2.1",
+     "sinon": "~9.2.4",
+     "ts-loader": "^8.0.17",
+     "ts-node": "^9.1.1",
+@@ -2616,6 +2685,7 @@
+     "webpack-cli": "^4.5.0"
+   },
+   "dependencies": {
++    "@vscode/extension-telemetry": "^0.6.2",
+     "ajv": "^7.1.0",
+     "chokidar": "^3.5.1",
+     "handlebars": "^4.7.7",
+@@ -2627,13 +2697,12 @@
+     "p-limit": "^3.1.0",
+     "rimraf": "^3.0.2",
+     "tmp": "^0.2.1",
++    "uuid": "~8.3.2",
+     "vscode-cpptools": "^6.1.0",
+-    "@vscode/extension-telemetry": "^0.6.2",
+-    "vscode-nls": "^5.0.0",
++    "vscode-nls": "git+https://github.com/tanji-dg/vscode-nls.git#v5.0.0",
+     "vscode-tas-client": "^0.1.22",
+     "which": "~2.0.2",
+-    "xml2js": "^0.4.23",
+-    "uuid": "~8.3.2"
++    "xml2js": "^0.4.23"
+   },
+   "resolutions": {
+     "ansi-regex": "^5.0.1",
+diff --git a/package.nls.json b/package.nls.json
+index 7a15f1a3..6d43c7a5 100644
+--- a/package.nls.json
++++ b/package.nls.json
+@@ -53,6 +53,7 @@
+     "cmake-tools.command.cmake.debugTargetAll.title": "Debug All Projects",
+     "cmake-tools.command.cmake.launchTarget.title": "Run Without Debugging",
+     "cmake-tools.command.cmake.launchTargetAll.title": "Run All Projects Without Debugging",
++    "cmake-tools.command.cmake.stopTarget.title": "Stop",
+     "cmake-tools.command.cmake.selectLaunchTarget.title": "Set Debug Target",
+     "cmake-tools.command.cmake.stop.title": "Cancel Build",
+     "cmake-tools.command.cmake.stopAll.title": "Cancel Build for All Projects",
+@@ -218,5 +219,8 @@
+     "cmake-tools.configuration.cmake.loadCompileCommands.description": "Controls whether the extension reads compile_commands.json to enable single file compilation.",
+     "cmake-tools.command.cmake.projectStatus.update.title": "Refresh the project status",
+     "cmake-tools.command.cmake.projectStatus.selectTestPreset.title": "Set test target",
+-    "cmake-tools.debugger.label": "CMake Debugger"
++    "cmake-tools.debugger.label": "CMake Debugger",
++	"cmake-tools.configuration.cmake.customTasks.description": "%cmake-tools.configuration.cmake.customTasks.description%",
++	"cmake-tools.configuration.cmake.debugConfigName.description": "%cmake-tools.configuration.cmake.debugConfigName.description%",
++	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "%cmake-tools.configuration.cmake.defaultLaunchTarget.description%"
+ }
+diff --git a/src/cmakeProject.ts b/src/cmakeProject.ts
+index fd39273c..4cbc79ad 100644
+--- a/src/cmakeProject.ts
++++ b/src/cmakeProject.ts
+@@ -911,7 +911,9 @@ export class CMakeProject {
+         // Set the status bar message
+         this.activeVariant.set(this.variantManager.activeVariantOptions.short);
+         // Restore the debug target
+-        this._launchTargetName.set(this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder) || '');
++        const defaultLaunchTarget = this.workspaceContext.config.defaultLaunchTarget || '';
++        this._launchTargetName.set(this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder) || defaultLaunchTarget);
++        await this.workspaceContext.state.setLaunchTargetName(this.folderName, this._launchTargetName.value, this.isMultiProjectFolder);
+ 
+         // Hook up event handlers
+         // Listen for the variant to change
+@@ -2029,6 +2031,11 @@ export class CMakeProject {
+         return this.setLaunchTargetByName(name);
+     }
+ 
++    appTarget: ExecutableTarget = {
++        name: localize("app.name", "Application"),
++        path: localize("app.path", "Default application on target.")
++    };
++
+     /**
+      * Used by vscode and as test interface
+      */
+@@ -2039,7 +2046,10 @@ export class CMakeProject {
+                 return null;
+             }
+         }
+-        const executableTargets = await this.executableTargets;
++        const executableTargets: ExecutableTarget[] = [];
++        executableTargets.push(this.appTarget);
++        const targets = await this.executableTargets;
++        executableTargets.push(...targets);
+         if (executableTargets.length === 0) {
+             return null;
+         } if (executableTargets.length === 1) {
+@@ -2121,6 +2131,11 @@ export class CMakeProject {
+      * Implementation of `cmake.getLaunchTargetPath`. This does not ensure the target exists.
+      */
+     async getLaunchTargetPath(): Promise<string | null> {
++        const targetName = this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder);
++        if (targetName ===  this.appTarget.name) {
++            return targetName;
++        }
++
+         if (await this.needsReconfigure()) {
+             const rc = await this.configureInternal(ConfigureTrigger.launch, [], ConfigureType.Normal);
+             if (rc !== 0) {
+@@ -2219,7 +2234,7 @@ export class CMakeProject {
+     }
+ 
+     async prepareLaunchTargetExecutable(name?: string): Promise<ExecutableTarget | null> {
+-        let chosen: ExecutableTarget;
++        let chosen: ExecutableTarget | null = null;
+ 
+         // Ensure that we've configured the project already. If we haven't, `getOrSelectLaunchTarget` won't see any
+         // executable targets and may show an uneccessary prompt to the user
+@@ -2239,18 +2254,23 @@ export class CMakeProject {
+             }
+             chosen = found;
+         } else {
+-            const current = await this.getOrSelectLaunchTarget();
+-            if (!current) {
+-                return null;
++            const targetName = this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder);
++            if (targetName === this.appTarget.name) {
++                chosen = this.appTarget;
++            } else {
++                const current = await this.getOrSelectLaunchTarget();
++                if (!current) {
++                    return null;
++                }
++                chosen = current;
+             }
+-            chosen = current;
+         }
+ 
+         const buildOnLaunch = this.workspaceContext.config.buildBeforeRun;
+         if (buildOnLaunch || isReconfigurationNeeded) {
+             const buildTargets = await this.getDefaultBuildTargets() || [];
+             const allTargetName = await this.allTargetName;
+-            if (!buildTargets.includes(allTargetName) && !buildTargets.includes(chosen.name)) {
++            if (chosen && chosen.name !== this.appTarget.name && !buildTargets.includes(allTargetName) && !buildTargets.includes(chosen.name)) {
+                 buildTargets.push(chosen.name);
+             }
+ 
+@@ -2311,12 +2331,19 @@ export class CMakeProject {
+             return null;
+         }
+ 
+-        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
++        const targetExecutable = await this.executeCustomTaskWithBuild("debug", name);
+         if (!targetExecutable) {
+-            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
+             return null;
+         }
+ 
++        const debugConfigName = this.workspaceContext.config.debugConfigName;
++        if (debugConfigName) {
++            const result = await expandStrings([ debugConfigName ], await this.getExpansionOptions());
++            log.debug(localize('debug.configuration.debugConfigName', 'Debug configuration: {0} {1}', debugConfigName, result[0]));
++            await vscode.debug.startDebugging(this.workspaceFolder, result[0]);
++            return vscode.debug.activeDebugSession!;
++        }
++
+         let debugConfig;
+         try {
+             const cache = await CMakeCache.fromPath(drv.cachePath);
+@@ -2423,17 +2450,84 @@ export class CMakeProject {
+         return vscode.window.createTerminal(options);
+     }
+ 
++    async executeTask(tasks: vscode.Task[], taskName: string, taskAt: string, buildType: string) {
++        for (const task of tasks) {
++            if (task.name === taskName) {
++                log.info(localize('executing.task', 'Executing {0} task {1} on {2}', taskAt, taskName, buildType));
++                await vscode.tasks.executeTask(task);
++            }
++        }
++    }
++
++    async executeCustomTaskWithBuild(taskAt: string, name?: string): Promise<ExecutableTarget | null> {
++
++        const customTasks = this.workspaceContext.config.customTasks;
++        let tasks;
++        let customTask;
++        if (customTasks) {
++            customTask = customTasks[taskAt];
++            buildLogger.info(localize('execute.custom.tasks.with.build', 'Executing custom tasks with build: {0}', taskAt));
++            tasks = await vscode.tasks.fetchTasks();
++            if (customTask instanceof Object && customTask.preBuild) {
++                await this.executeTask(tasks, customTask.preBuild.toString(), taskAt, "preBuild");
++            }
++        } else {
++            buildLogger.info(localize('no.custom.tasks', 'No custom tasks'));
++        }
++
++        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
++        if (!targetExecutable) {
++            if (!name) {
++                name = this.targetName.value;
++            }
++            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
++            return null;
++        }
++
++        if (tasks && customTask instanceof Object && customTask.postBuild) {
++            await this.executeTask(tasks, customTask.postBuild.toString(), taskAt, "postBuild");
++        }
++
++        return targetExecutable;
++    }
++
++    async executeCustomTask(taskName: string): Promise<Thenable<vscode.TaskExecution> |null> {
++
++        const customTasks = this.workspaceContext.config.customTasks;
++        if (customTasks) {
++            const customTaskName = customTasks[taskName];
++            if (typeof customTaskName === "string") {
++                const tasks = await vscode.tasks.fetchTasks();
++                for (const task of tasks) {
++                    if (task.name === customTaskName.toString()) {
++                        log.info(localize('executing.task.with.build', 'Executing task {0} on {1}', customTaskName.toString(), taskName));
++                        return vscode.tasks.executeTask(task);
++                    }
++                }
++                void vscode.window.showErrorMessage(localize('no.custom.task', 'Task not found: {0}', customTaskName.toString()));
++                return null;
++            }
++        }
++        return null;
++    }
++
+     /**
+      * Implementation of `cmake.launchTarget`
+      */
+     async launchTarget(name?: string) {
+-        const executable = await this.prepareLaunchTargetExecutable(name);
++
++        const executable = await this.executeCustomTaskWithBuild('launch', name);
+         if (!executable) {
+             // The user has nothing selected and cancelled the prompt to select
+             // a target.
+             return null;
+         }
+ 
++        const customTasks = this.workspaceContext.config.customTasks;
++        if (customTasks?.launch) {
++            return null;
++        }
++
+         const userConfig = this.workspaceContext.config.debugConfig;
+         const terminal: vscode.Terminal = await this.createTerminal(executable);
+ 
+diff --git a/src/config.ts b/src/config.ts
+index 0b9676cf..77558e7d 100644
+--- a/src/config.ts
++++ b/src/config.ts
+@@ -146,6 +146,9 @@ export interface ExtensionConfigurationSettings {
+     launchBehavior: string;
+     ignoreCMakeListsMissing: boolean;
+     automaticReconfigure: boolean;
++    customTasks: { [key: string]: string | { [key: string]: {[key: string]: string} } };
++    debugConfigName: string | null;
++    defaultLaunchTarget: string | null;
+ }
+ 
+ type EmittersOf<T> = {
+@@ -464,6 +467,18 @@ export class ConfigurationReader implements vscode.Disposable {
+         return this.configData.automaticReconfigure;
+     }
+ 
++    get customTasks(): {[key: string]: string | {[key: string]: {[key: string]: string}}} {
++        return this.configData.customTasks;
++    }
++
++    get debugConfigName(): string | null {
++        return this.configData.debugConfigName;
++    }
++
++    get defaultLaunchTarget(): string | null {
++        return this.configData.defaultLaunchTarget;
++    }
++
+     private readonly emitters: EmittersOf<ExtensionConfigurationSettings> = {
+         autoSelectActiveFolder: new vscode.EventEmitter<boolean>(),
+         cmakePath: new vscode.EventEmitter<string>(),
+@@ -521,7 +536,10 @@ export class ConfigurationReader implements vscode.Disposable {
+         allowUnsupportedPresetsVersions: new vscode.EventEmitter<boolean>(),
+         ignoreCMakeListsMissing: new vscode.EventEmitter<boolean>(),
+         launchBehavior: new vscode.EventEmitter<string>(),
+-        automaticReconfigure: new vscode.EventEmitter<boolean>()
++        automaticReconfigure: new vscode.EventEmitter<boolean>(),
++        customTasks: new vscode.EventEmitter<{ [key: string]: string | { [key: string]: { [key: string]: string} }}>(),
++        debugConfigName: new vscode.EventEmitter<string>(),
++        defaultLaunchTarget: new vscode.EventEmitter<string>()
+     };
+ 
+     /**
+diff --git a/src/cpptools.ts b/src/cpptools.ts
+index f80fd6da..e828831c 100644
+--- a/src/cpptools.ts
++++ b/src/cpptools.ts
+@@ -324,7 +324,7 @@ export class CppConfigurationProvider implements cpptools.CustomConfigurationPro
+     /** Our name visible to cpptools */
+     readonly name = 'CMake Tools';
+     /** Our extension ID, visible to cpptools */
+-    readonly extensionId = 'ms-vscode.cmake-tools';
++    readonly extensionId = 'ms-vscode.cmake-tools-dg';
+     /**
+      * This value determines if we need to show the user an error message about missing compilers. When an update succeeds
+      * without missing any compilers, we set this to `true`, otherwise `false`.
+diff --git a/src/extension.ts b/src/extension.ts
+index 0e0685f8..96609307 100644
+--- a/src/extension.ts
++++ b/src/extension.ts
+@@ -1420,6 +1420,11 @@ export class ExtensionManager implements vscode.Disposable {
+         return this.runCMakeCommand(cmakeProject => cmakeProject.selectLaunchTarget(name), folder);
+     }
+ 
++    stopTarget(folder?: vscode.WorkspaceFolder) {
++        telemetry.logEvent("stop", { command: "stopTarget" });
++        return this.runCMakeCommand(cmakeProject => cmakeProject.executeCustomTask('stop'), folder);
++    }
++
+     async resetState(folder?: vscode.WorkspaceFolder) {
+         telemetry.logEvent("resetExtension");
+         if (folder) {
+@@ -1775,6 +1780,7 @@ async function setup(context: vscode.ExtensionContext, progress?: ProgressHandle
+         'launchTargetAll',
+         'selectLaunchTarget',
+         'setDefaultTarget',
++        'stopTarget',
+         'resetState',
+         'viewLog',
+         'logDiagnostics',
+diff --git a/src/status.ts b/src/status.ts
+index 259acdaf..4c38d483 100644
+--- a/src/status.ts
++++ b/src/status.ts
+@@ -308,6 +308,7 @@ class BuildTargetSelectionButton extends Button {
+         return this.prependCMake(this.tooltip);
+     }
+ }
++
+ class LaunchTargetSelectionButton extends Button {
+     settingsName = 'launchTarget';
+     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
+@@ -321,15 +322,7 @@ class LaunchTargetSelectionButton extends Button {
+     }
+ }
+ 
+-class DebugButton extends Button {
+-    settingsName = 'debug';
+-    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
+-        super(config, priority);
+-        this.command = 'cmake.debugTarget';
+-        this.icon = 'bug';
+-        this.tooltip = localize('launch.debugger.tooltip', 'Launch the debugger for the selected target');
+-    }
+-
++class ControlButton extends Button {
+     private _target: string | null = null;
+ 
+     set target(v: string | null) {
+@@ -343,33 +336,39 @@ class DebugButton extends Button {
+         }
+         return this.tooltip;
+     }
++}
++
++class DebugButton extends ControlButton {
++    settingsName = 'debug';
++    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
++        super(config, priority);
++        this.command = 'cmake.debugTarget';
++        this.icon = 'bug';
++        this.tooltip = localize('launch.debugger.tooltip', 'Launch the debugger for the selected target');
++    }
+ 
+     protected isVisible(): boolean {
+         return super.isVisible() && hasCPPTools();
+     }
+ }
+ 
+-class LaunchButton extends Button {
++class LaunchButton extends ControlButton {
+     settingsName = 'launch';
+     constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
+         super(config, priority);
+         this.command = 'cmake.launchTarget';
+         this.icon = 'play';
+-        this.tooltip = localize('launch.tooltip', 'Launch the selected target in the terminal window');
+-    }
+-
+-    private _target: string | null = null;
+-
+-    set target(v: string | null) {
+-        this._target = v;
+-        this.update();
++        this.tooltip = localize('launch.tooltip', 'Launch the selected target');
+     }
++}
+ 
+-    protected getTooltipNormal(): string | null {
+-        if (!!this._target) {
+-            return `${this.tooltip}: [${this._target}]`;
+-        }
+-        return this.tooltip;
++class StopButton extends ControlButton {
++    settingsName = 'stop';
++    constructor(protected readonly config: ConfigurationReader, protected readonly priority: number) {
++        super(config, priority);
++        this.command = 'cmake.stopTarget';
++        this.icon = 'debug-stop';
++        this.tooltip = localize('stop.tooltip', 'Stop the selected target');
+     }
+ }
+ 
+@@ -612,6 +611,7 @@ export class StatusBar implements vscode.Disposable {
+     private readonly _debugButton: DebugButton = new DebugButton(this._config, 3.22);
+     private readonly _launchButton = new LaunchButton(this._config, 3.21);
+     private readonly _launchTargetNameButton = new LaunchTargetSelectionButton(this._config, 3.2);
++    private readonly _stopButton = new StopButton(this._config, 3.21);
+ 
+     private readonly _testPresetButton = new TestPresetSelection(this._config, 3.15);
+     private readonly _testButton = new CTestButton(this._config, 3.1);
+@@ -631,6 +631,7 @@ export class StatusBar implements vscode.Disposable {
+             this._launchButton,
+             this._configurePresetButton,
+             this._buildPresetButton,
++            this._stopButton,
+             this._testPresetButton
+         ];
+         this._config.onChange('statusbar', () => this.update());
+@@ -669,6 +670,7 @@ export class StatusBar implements vscode.Disposable {
+         this._launchTargetNameButton.text = v;
+         this._launchButton.target = v;
+         this._debugButton.target = v;
++        this._stopButton.target = v;
+     }
+     setCTestEnabled(v: boolean): void {
+         this._testButton.enabled = v;
+diff --git a/src/util.ts b/src/util.ts
+index 2bdaba9c..85538784 100644
+--- a/src/util.ts
++++ b/src/util.ts
+@@ -457,7 +457,7 @@ export function parseCompileDefinition(str: string): [string, string | null] {
+ }
+ 
+ export function thisExtension() {
+-    const extension = vscode.extensions.getExtension('ms-vscode.cmake-tools');
++    const extension = vscode.extensions.getExtension('ms-vscode.cmake-tools-dg');
+     if (!extension) {
+         throw new Error(localize('extension.is.undefined', 'Extension is undefined!'));
+     }
+diff --git a/test/helpers/vscodefake/extensioncontext.ts b/test/helpers/vscodefake/extensioncontext.ts
+index 784f2472..e5707f2c 100644
+--- a/test/helpers/vscodefake/extensioncontext.ts
++++ b/test/helpers/vscodefake/extensioncontext.ts
+@@ -41,7 +41,7 @@ export class DefaultExtensionContext implements vscode.ExtensionContext {
+     extension: vscode.Extension<any>;
+ 
+     constructor() {
+-        this.extension = vscode.extensions.getExtension("ms-vscode.cmake-tools")!;
++        this.extension = vscode.extensions.getExtension("ms-vscode.cmake-tools-dg")!;
+     }
+     public clean() {
+         (this.workspaceState as TestMemento).clear();
+@@ -89,7 +89,7 @@ export class SmokeTestExtensionContext implements vscode.ExtensionContext {
+     extension: vscode.Extension<any>;
+ 
+     constructor(public readonly extensionPath: string) {
+-        this.extension = vscode.extensions.getExtension("ms-vscode.cmake-tools")!;
++        this.extension = vscode.extensions.getExtension("ms-vscode.cmake-tools-dg")!;
+     }
+     public clean() {
+         (this.workspaceState as TestMemento).clear();
+diff --git a/test/unit-tests/config.test.ts b/test/unit-tests/config.test.ts
+index 0b0211e7..1e94945a 100644
+--- a/test/unit-tests/config.test.ts
++++ b/test/unit-tests/config.test.ts
+@@ -66,7 +66,10 @@ function createConfig(conf: Partial<ExtensionConfigurationSettings>): Configurat
+         allowUnsupportedPresetsVersions: false,
+         launchBehavior: 'reuseTerminal',
+         ignoreCMakeListsMissing: false,
+-        automaticReconfigure: false
++        automaticReconfigure: false,
++        customTasks: {},
++        debugConfigName: null,
++        defaultLaunchTarget: null
+     });
+     ret.updatePartial(conf);
+     return ret;
+diff --git a/test/util.ts b/test/util.ts
+index 558c7b9b..05be1102 100644
+--- a/test/util.ts
++++ b/test/util.ts
+@@ -24,7 +24,7 @@ export async function clearExistingKitConfigurationFile() {
+ }
+ 
+ export function getExtension() {
+-    const extension = vscode.extensions.getExtension('ms-vscode.cmake-tools');
++    const extension = vscode.extensions.getExtension('ms-vscode.cmake-tools-dg');
+     if (!extension) {
+         throw new Error('Extension is undefined!');
+     }
+diff --git a/webpack.config.js b/webpack.config.js
+index a7358425..34026111 100644
+--- a/webpack.config.js
++++ b/webpack.config.js
+@@ -11,6 +11,8 @@ const path = require('path');
+ 
+ /**@type {import('webpack').Configuration}*/
+ const config = {
++    mode: 'development',
++
+     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
+ 
+     entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+diff --git a/webpack.prod.js b/webpack.prod.js
+new file mode 100644
+index 00000000..dde628a6
+--- /dev/null
++++ b/webpack.prod.js
+@@ -0,0 +1,77 @@
++/*---------------------------------------------------------------------------------------------
++ *  Copyright (c) Microsoft Corporation. All rights reserved.
++ *  Licensed under the MIT License. See License.txt in the project root for license information.
++ *--------------------------------------------------------------------------------------------*/
++
++//@ts-check
++
++'use strict';
++
++const path = require('path');
++
++/**@type {import('webpack').Configuration}*/
++const config = {
++    mode: 'production',
++
++    target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
++
++    entry: './out/src/extension.js', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
++    output: { // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
++        path: path.resolve(__dirname, 'dist'),
++        filename: 'main.js',
++        libraryTarget: "commonjs2",
++        devtoolModuleFilenameTemplate: "../[resource-path]",
++    },
++    node: {
++        __dirname: false,
++        //__filename: true,
++    },
++    devtool: 'source-map',
++    externals: {
++        vscode: "commonjs vscode" // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
++    },
++    resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
++        extensions: ['.ts', '.js'],
++        alias: {
++            "@cmt": path.resolve(__dirname, './out/src')
++        },
++        mainFields: ['main', 'module']
++    },
++    module: {
++        rules: [{
++            test: /\.ts$/,
++            exclude: /node_modules/,
++            use: [{
++                // configure TypeScript loader:
++                // * enable sources maps for end-to-end source maps
++                loader: 'ts-loader',
++                options: {
++                    compilerOptions: {
++                        "sourceMap": true,
++                    }
++                }
++            }]
++        },{
++            test: /.node$/,
++            loader: 'node-loader',
++        }]
++    },
++    optimization: {
++        minimize: false
++    },
++    stats: {
++        warnings: false
++    }
++}
++
++if (process.env.BUILD_VSCODE_NLS) {
++	// rewrite nls call when being asked for
++	config.module.rules.unshift({
++		loader: 'vscode-nls-dev/lib/webpack-loader',
++		options: {
++			base: __dirname
++		}
++	})
++}
++
++module.exports = config;

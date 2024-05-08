@@ -3817,6 +3817,7 @@
     "module-alias": "^2.2.2",
     "node-loader": "^1.0.2",
     "parse-git-config": "^3.0.0",
+    "run-sequence": "^2.2.1",
     "sinon": "~9.2.4",
     "ts-loader": "^8.0.17",
     "ts-node": "^9.1.1",
@@ -3867,5 +3868,4 @@
     "minimatch": "^3.0.5"
   }, 
   "packageManager": "yarn@1.22.19",
-  "enabledApiProposals": ["extensionRuntime"]
 }
