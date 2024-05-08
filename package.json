@@ -762,12 +762,6 @@
         "category": "CMake"
       },
       {
-        "command": "cmake.stopTarget",
-        "title": "%cmake-tools.command.cmake.stopTarget.title%",
-        "when": "cmake:enableFullFeatureSet",
-        "category": "CMake"
-      },
-      {
         "command": "cmake.selectLaunchTarget",
         "title": "%cmake-tools.command.cmake.selectLaunchTarget.title%",
         "when": "cmake:enableFullFeatureSet",
@@ -3613,6 +3607,7 @@
           "description": "%cmake-tools.configuration.cmake.enableAutomaticKitScan.description%",
           "scope": "resource"
         },
+<<<<<<< HEAD
         "cmake.customTasks": {
           "type": "object",
           "properties": {
@@ -3662,6 +3657,8 @@
           "description": "%cmake-tools.configuration.cmake.defaultLaunchTarget.description%",
           "scope": "resource"
         },
+=======
+>>>>>>> 9e23a43106fc9fa0dcd220f75ed6bbcb9e09186c
         "cmake.customTasks": {
           "type": "object",
           "properties": {
@@ -3897,6 +3894,10 @@
     "rimraf": "^3.0.2",
     "string.prototype.matchall": "^4.0.10",
     "tmp": "^0.2.1",
+<<<<<<< HEAD
+=======
+    "uuid": "~8.3.2",
+>>>>>>> 9e23a43106fc9fa0dcd220f75ed6bbcb9e09186c
     "vscode-cpptools": "^6.1.0",
     "@vscode/extension-telemetry": "^0.6.2",
     "vscode-nls": "git+https://github.com/tanji-dg/vscode-nls.git#v5.0.0",
