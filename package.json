@@ -2609,12 +2609,12 @@
     "@test": "out/test/"
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile-production",
-    "compile": "npm install && webpack --mode development",
-    "compile-watch": "npm install && webpack --mode development --watch --progress",
+    "vscode:prepublish": "yarn run compile-production",
+    "compile": "yarn install && webpack --mode development",
+    "compile-watch": "yarn install && webpack --mode development --watch --progress",
     "compile-watch-fast": "webpack --mode development --watch --progress",
-    "compile-production": "npm install && npm run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
-    "compile-production-fast": "npm run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
+    "compile-production": "yarn install && yarn run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
+    "compile-production-fast": "yarn run translations-generate && gulp -f gulpfile_nls.js && ./conv.sh && webpack --env BUILD_VSCODE_NLS=true --config webpack.prod.js",
     "translations-export": "gulp translations-export",
     "translations-generate": "gulp translations-generate",
     "translations-import": "gulp translations-import",
