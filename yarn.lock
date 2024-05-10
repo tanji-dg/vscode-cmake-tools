@@ -6827,7 +6827,7 @@ vscode-nls-dev@^3.3.2:
     xml2js "^0.4.19"
     yargs "^13.2.4"
 
-"vscode-nls@git+https://github.com/tanji-dg/vscode-nls.git#v5.0.0":
+"vscode-nls@https://github.com/tanji-dg/vscode-nls.git#v5.0.0":
   version "5.0.0"
   resolved "git+ssh://git@github.com/tanji-dg/vscode-nls.git#cdbe33ccc0720a89d805d052bd9f19e938b89102"
   integrity sha512-rGSRFk9QERfZb2QalDwtyEemni+EY7vcYH2PKm7iPxg8V1ActKREeFlub/Z0wJ3nSig/PKWP0/9Z7TVykzMwKQ==
