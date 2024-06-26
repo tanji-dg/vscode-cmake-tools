@@ -72,7 +72,7 @@ export class CompileOutputConsumer implements OutputConsumer {
             MSVC: this.compilers.msvc.diagnostics,
             GHS: this.compilers.ghs.diagnostics,
             DIAB: this.compilers.diab.diagnostics,
-            link: this.compilers.gnuLD.diagnostics,
+            gnuLD: this.compilers.gnuLD.diagnostics,
             IAR: this.compilers.iar.diagnostics
         };
         const arrs = util.objectPairs(by_source)
