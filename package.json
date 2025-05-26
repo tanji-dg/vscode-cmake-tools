@@ -1,8 +1,8 @@
 {
-  "name": "cmake-tools",
-  "displayName": "CMake Tools",
+  "name": "cmake-tools-dg",
+  "displayName": "CMake Tools for Daitogiken",
   "description": "Extended CMake support in Visual Studio Code",
-  "version": "1.13.0",
+  "version": "1.3.1",
   "publisher": "ms-vscode",
   "repository": {
     "type": "git",
@@ -65,6 +65,8 @@
     "workspaceContains:*/*/CMakeLists.txt",
     "workspaceContains:*/*/*/CMakeLists.txt",
     "workspaceContains:.vscode/cmake-kits.json",
+    "workspaceContains:cmake/CMakeLists.txt",
+    "workspaceContains:cmake/CMakePresets.json",
     "onFileSystem:cmake-tools-schema",
     "onLanguage:cmake",
     "onLanguage:cmake-cache"
@@ -457,6 +459,11 @@
         "icon": "$(cmake-tools-build)"
       },
       {
+        "command": "cmake.buildNamedTarget",
+        "when": "cmake:enableFullFeatureSet",
+        "title": "%cmake-tools.command.cmake.buildNamedTarget.title%"
+      },
+      {
         "command": "cmake.compileFile",
         "title": "%cmake-tools.command.cmake.compileFile.title%",
         "category": "CMake",
@@ -759,6 +766,12 @@
       {
         "command": "cmake.launchTargetAll",
         "title": "%cmake-tools.command.cmake.launchTargetAll.title%",
+        "when": "cmake:enableFullFeatureSet",
+        "category": "CMake"
+      },
+      {
+        "command": "cmake.stopTarget",
+        "title": "%cmake-tools.command.cmake.stopTarget.title%",
         "when": "cmake:enableFullFeatureSet",
         "category": "CMake"
       },
@@ -1127,6 +1140,10 @@
         {
           "command": "cmake.openCMakePresets",
           "when": "cmake:enableFullFeatureSet && useCMakePresets"
+        },
+        {
+          "command": "cmake.stopTarget",
+          "when": "cmake:enableFullFeatureSet"
         },
         {
           "command": "cmake.addConfigurePreset",
@@ -2037,7 +2054,7 @@
           "type": "boolean",
           "default": true,
           "description": "%cmake-tools.configuration.cmake.autoSelectActiveFolder.description%",
-          "scope": "window"
+          "scope": "resource"
         },
         "cmake.defaultActiveFolder": {
           "type": "string",
@@ -3523,6 +3540,12 @@
             }
           }
         },
+        "cmake.useProjectStatusView": {
+          "type": "boolean",
+          "default": false,
+          "description": "%cmake-tools.configuration.cmake.useProjectStatusView.description%",
+          "scope": "window"
+        },
         "cmake.additionalKits": {
           "type": "array",
           "default": [],
@@ -3640,6 +3663,44 @@
           "description": "%cmake-tools.configuration.cmake.enableAutomaticKitScan.description%",
           "scope": "resource"
         },
+        "cmake.customTasks": {
+          "type": "object",
+          "properties": {
+            "launch": {
+              "type": "object",
+              "properties": {
+                "preBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
+                },
+                "postBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.postBuild.description%"
+                }
+              },
+              "description": "%cmake-tools.configuration.cmake.customTasks.launch.debug.description%"
+            },
+            "debug": {
+              "type": "object",
+              "properties": {
+                "preBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.tasks.preBuild.description%"
+                },
+                "postBuild": {
+                  "type": "string",
+                  "description": "%cmake-tools.configuration.cmake.customTasks.postBuild.description%"
+                }
+              },
+              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.debug.description%"
+            },
+            "stop": {
+              "type": "string",
+              "description": "%cmake-tools.configuration.cmake.customTasks.tasks.stop.description%"
+            }
+          },
+          "description": "%cmake-tools.configuration.cmake.customTasks.description%",
+        },
         "cmake.enableLanguageServices": {
           "type": "boolean",
           "default": true,
@@ -3695,6 +3756,11 @@
         "key": "shift+ctrl+f5",
         "command": "cmake.launchTarget",
         "when": "!inDebugMode && !cmake:hideDebugCommand && cmake:enableFullFeatureSet"
+      },
+      {
+        "key": "ctrl+f7",
+        "when": "!cmake:hideBuildCommand && cmake:enableFullFeatureSet",
+        "command": "cmake.stopTarget"
       }
     ],
     "viewsContainers": {
@@ -3812,6 +3878,7 @@
     "chai": "^4.3.0",
     "chai-as-promised": "^7.1.1",
     "chai-string": "^1.5.0",
+    "del": "^6.0.0",
     "eslint": "^8.15.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsdoc": "^48.2.8",
@@ -3830,6 +3897,7 @@
     "module-alias": "^2.2.2",
     "node-loader": "^1.0.2",
     "parse-git-config": "^3.0.0",
+    "run-sequence": "^2.2.1",
     "sinon": "~9.2.4",
     "ts-loader": "^8.0.17",
     "ts-node": "^9.1.1",

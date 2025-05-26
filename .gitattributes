@@ -1,3 +1,5 @@
 * eol=lf
-*.png   binary
+*.png binary
 *.exe binary
+*.tgz binary
+**/vscode-nls.git* binary
