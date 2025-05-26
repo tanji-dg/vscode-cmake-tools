@@ -692,7 +692,7 @@ export class ConfigurationReader implements vscode.Disposable {
         preRunCoverageTarget: new vscode.EventEmitter<string | null>(),
         postRunCoverageTarget: new vscode.EventEmitter<string | null>(),
         coverageInfoFiles: new vscode.EventEmitter<string[]>(),
-        useFolderPropertyInBuildTargetDropdown: new vscode.EventEmitter<boolean>()
+        useFolderPropertyInBuildTargetDropdown: new vscode.EventEmitter<boolean>(),
         customTasks: new vscode.EventEmitter<{ [key: string]: string | { [key: string]: { [key: string]: string} }}>(),
         debugConfigName: new vscode.EventEmitter<string>(),
         defaultLaunchTarget: new vscode.EventEmitter<string>()
