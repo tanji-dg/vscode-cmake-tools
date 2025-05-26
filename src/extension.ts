@@ -62,6 +62,7 @@ const multiProjectModeKey = 'cmake:multiProject';
 export const hideLaunchCommandKey = 'cmake:hideLaunchCommand';
 export const hideDebugCommandKey = 'cmake:hideDebugCommand';
 export const hideBuildCommandKey = 'cmake:hideBuildCommand';
+export const hideRebuildCommandKey = 'cmake:hideRebuildCommand';
 
 /**
  * The global extension manager. There is only one of these, even if multiple
@@ -1846,6 +1847,11 @@ export class ExtensionManager implements vscode.Disposable {
         return this.runCMakeCommand(cmakeProject => cmakeProject.selectLaunchTarget(name), folder, undefined, undefined, sourceDir);
     }
 
+    stopTarget(folder?: vscode.WorkspaceFolder) {
+        telemetry.logEvent("stop", { command: "stopTarget" });
+        return this.runCMakeCommand(cmakeProject => cmakeProject.executeCustomTask('stop'), folder);
+    }
+
     async resetState(folder?: vscode.WorkspaceFolder) {
         telemetry.logEvent("resetExtension");
         if (folder) {
@@ -1926,6 +1932,12 @@ export class ExtensionManager implements vscode.Disposable {
         this.statusBar.hideBuildButton(shouldHide);
         await this.projectStatus.hideBuildButton(shouldHide);
         await setContextAndStore(hideBuildCommandKey, shouldHide);
+    }
+
+    async hideRebuildCommand(shouldHide: boolean = true) {
+        // await this.projectController.hideRebuildButton(shouldHide);
+        this.statusBar.hideRebuildButton(shouldHide);
+        await util.setContextValue(hideRebuildCommandKey, shouldHide);
     }
 
     // Answers whether the workspace contains at least one project folder that is CMake based,
@@ -2383,6 +2395,7 @@ async function setup(context: vscode.ExtensionContext, progress?: ProgressHandle
         'launchTargetAll',
         'selectLaunchTarget',
         'setDefaultTarget',
+        'stopTarget',
         'resetState',
         'openSettings',
         'viewLog',
