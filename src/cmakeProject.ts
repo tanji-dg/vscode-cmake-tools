@@ -2907,6 +2907,11 @@ export class CMakeProject {
         return this.setLaunchTargetByName(name);
     }
 
+    appTarget: ExecutableTarget = {
+        name: localize("app.name", "Application"),
+        path: localize("app.path", "Default application on target.")
+    };
+
     /**
      * Implementation of `cmake.selectBuildAndLaunchTarget`
      * Sets both the build target and the launch/debug target simultaneously.
@@ -2932,7 +2937,10 @@ export class CMakeProject {
                 return null;
             }
         }
-        const executableTargets = await this.executableTargets;
+        const executableTargets: ExecutableTarget[] = [];
+        executableTargets.push(this.appTarget);
+        const targets = await this.executableTargets;
+        executableTargets.push(...targets);
         if (executableTargets.length === 0) {
             return null;
         } if (executableTargets.length === 1) {
@@ -2972,6 +2980,67 @@ export class CMakeProject {
             return null;
         }
         return target;
+    }
+
+    async executeTask(tasks: vscode.Task[], taskName: string, taskAt: string, buildType: string) {
+        for (const task of tasks) {
+            if (task.name === taskName) {
+                log.info(localize('executing.task', 'Executing {0} task {1} on {2}', taskAt, taskName, buildType));
+                await vscode.tasks.executeTask(task);
+            }
+        }
+    }
+
+    async executeCustomTaskWithBuild(taskAt: string, name?: string): Promise<ExecutableTarget | null> {
+
+        const customTasks = this.workspaceContext.config.customTasks;
+        let tasks;
+        let customTask;
+        if (customTasks) {
+            customTask = customTasks[taskAt];
+            buildLogger.info(localize('execute.custom.tasks.with.build', 'Executing custom tasks with build: {0}', taskAt));
+            tasks = await vscode.tasks.fetchTasks();
+            if (customTask instanceof Object && customTask.preBuild) {
+                await this.executeTask(tasks, customTask.preBuild.toString(), taskAt, "preBuild");
+            }
+        } else {
+            buildLogger.info(localize('no.custom.tasks', 'No custom tasks'));
+        }
+
+        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
+        if (!targetExecutable) {
+            if (!name) {
+                name = this.targetName.value;
+            }
+            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
+            return null;
+        }
+
+        if (tasks && customTask instanceof Object && customTask.postBuild) {
+            await this.executeTask(tasks, customTask.postBuild.toString(), taskAt, "postBuild");
+        }
+
+        return targetExecutable;
+    }
+
+    async executeCustomTask(taskName: string): Promise<Thenable<vscode.TaskExecution> |null> {
+
+        const customTasks = this.workspaceContext.config.customTasks;
+        if (customTasks) {
+            const customTaskName = customTasks[taskName];
+            if (typeof customTaskName === "string") {
+                const tasks = await vscode.tasks.fetchTasks();
+                for (const task of tasks) {
+                    if (task.name === customTaskName.toString()) {
+                        log.info(localize('executing.task.with.build', 'Executing task {0} on {1}', customTaskName.toString(), taskName));
+                        return vscode.tasks.executeTask(task);
+                    }
+                }
+                void vscode.window.showErrorMessage(localize('no.custom.task', 'Task not found: {0}', customTaskName.toString()));
+                return null;
+            }
+        }
+        return null;
     }
 
     /**
@@ -3033,6 +3102,11 @@ export class CMakeProject {
      * @param name Optional target name. When provided, resolves the named target without changing the active launch target.
      */
     async getLaunchTargetPath(name?: string): Promise<string | null> {
+        const targetName = this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder);
+        if (targetName ===  this.appTarget.name) {
+            return targetName;
+        }
+
         if (await this.needsReconfigure()) {
             const rc = await this.configureInternal(ConfigureTrigger.launch, [], ConfigureType.Normal);
             if (rc.exitCode !== 0) {
@@ -3178,7 +3252,7 @@ export class CMakeProject {
             }
         }
 
-        let chosen: ExecutableTarget;
+        let chosen: ExecutableTarget | null = null;
 
         // Save dirty editors and refresh presets from disk before checking whether
         // reconfiguration is needed.  This mirrors the logic in ensureConfigured()
@@ -3206,11 +3280,16 @@ export class CMakeProject {
             }
             chosen = found;
         } else {
-            const current = await this.getOrSelectLaunchTarget();
-            if (!current) {
-                return null;
+            const targetName = this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder);
+            if (targetName === this.appTarget.name) {
+                chosen = this.appTarget;
+            } else {
+                const current = await this.getOrSelectLaunchTarget();
+                if (!current) {
+                    return null;
+                }
+                chosen = current;
             }
-            chosen = current;
         }
 
         const buildOnLaunch = this.workspaceContext.config.buildBeforeRun;
@@ -3324,10 +3403,17 @@ export class CMakeProject {
             return null;
         }
 
-        const targetExecutable = await this.prepareLaunchTargetExecutable(name);
+        const targetExecutable = await this.executeCustomTaskWithBuild("debug", name);
         if (!targetExecutable) {
-            log.error(localize('failed.to.prepare.target', 'Failed to prepare executable target with name {0}', `"${name}"`));
             return null;
+        }
+
+        const debugConfigName = this.workspaceContext.config.debugConfigName;
+        if (debugConfigName) {
+            const result = await expandStrings([ debugConfigName ], await this.getExpansionOptions());
+            log.debug(localize('debug.configuration.debugConfigName', 'Debug configuration: {0} {1}', debugConfigName, result[0]));
+            await vscode.debug.startDebugging(this.workspaceFolder, result[0]);
+            return vscode.debug.activeDebugSession!;
         }
 
         let debugConfig;
@@ -3457,10 +3543,15 @@ export class CMakeProject {
      * Implementation of `cmake.launchTarget`
      */
     async launchTarget(name?: string) {
-        const executable = await this.prepareLaunchTargetExecutable(name);
+        const executable = await this.executeCustomTaskWithBuild('launch', name);
         if (!executable) {
             // The user has nothing selected and cancelled the prompt to select
             // a target.
+            return null;
+        }
+
+        const customTasks = this.workspaceContext.config.customTasks;
+        if (customTasks?.launch) {
             return null;
         }
 
@@ -3930,11 +4021,13 @@ export class CMakeProject {
     }
 
     public hideBuildButton: boolean = false;
+    public hideRebuildButton: boolean = false;
     public hideDebugButton: boolean = false;
     public hideLaunchButton: boolean = false;
 
     doStatusChange(options: OptionConfig) {
         this.hideBuildButton = (options?.advanced?.build?.statusBarVisibility === "hidden" && options?.advanced?.build?.projectStatusVisibility === "hidden") ? true : false;
+        this.hideRebuildButton = (options.advanced?.rebuild?.statusBarVisibility === "hidden") ? true : false;
         this.hideDebugButton = (options?.advanced?.debug?.statusBarVisibility === "hidden" && options?.advanced?.debug?.projectStatusVisibility === "hidden") ? true : false;
         this.hideLaunchButton = (options?.advanced?.launch?.statusBarVisibility === "hidden" && options?.advanced?.launch?.projectStatusVisibility === "hidden") ? true : false;
     }

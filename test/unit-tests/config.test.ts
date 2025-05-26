@@ -105,7 +105,10 @@ function createConfig(conf: Partial<ExtensionConfigurationSettings>): Configurat
             targetSourceCommands: ['target_sources', 'add_executable', 'add_library'],
             scopeSelection: 'ask',
             sourceListKeywords: []
-        }
+        },
+        customTasks: {},
+        debugConfigName: null,
+        defaultLaunchTarget: null
     });
     ret.updatePartial(conf);
     return ret;
