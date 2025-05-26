@@ -84,7 +84,10 @@ function createConfig(conf: Partial<ExtensionConfigurationSettings>): Configurat
         preRunCoverageTarget: null,
         postRunCoverageTarget: null,
         coverageInfoFiles: [],
-        useFolderPropertyInBuildTargetDropdown: true
+        useFolderPropertyInBuildTargetDropdown: true,
+        customTasks: {},
+        debugConfigName: null,
+        defaultLaunchTarget: null
     });
     ret.updatePartial(conf);
     return ret;

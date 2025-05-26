@@ -108,6 +108,11 @@ export interface AdvancedOptionConfig {
         statusBarVisibility?: StatusBarStaticOptionVisibility;
         inheritDefault?: StatusBarInheritStaticOptionVisibility;
     };
+    rebuild?: {
+        projectStatusVisibility?: ProjectStatusOptionVisibility;
+        statusBarVisibility?: StatusBarStaticOptionVisibility;
+        inheritDefault?: StatusBarInheritStaticOptionVisibility;
+    };
     launchTarget?: {
         projectStatusVisibility?: ProjectStatusOptionVisibility;
         statusBarVisibility?: StatusBarTextOptionVisibility;
@@ -223,6 +228,10 @@ export interface ExtensionConfigurationSettings {
     postRunCoverageTarget: string | null;
     coverageInfoFiles: string[];
     useFolderPropertyInBuildTargetDropdown: boolean;
+
+    customTasks: { [key: string]: string | { [key: string]: {[key: string]: string} } };
+    debugConfigName: string | null;
+    defaultLaunchTarget: string | null;
 }
 
 type EmittersOf<T> = {
@@ -601,6 +610,18 @@ export class ConfigurationReader implements vscode.Disposable {
         return this.configData.useFolderPropertyInBuildTargetDropdown;
     }
 
+    get customTasks(): {[key: string]: string | {[key: string]: {[key: string]: string}}} {
+        return this.configData.customTasks;
+    }
+
+    get debugConfigName(): string | null {
+        return this.configData.debugConfigName;
+    }
+
+    get defaultLaunchTarget(): string | null {
+        return this.configData.defaultLaunchTarget;
+    }
+
     private readonly emitters: EmittersOf<ExtensionConfigurationSettings> = {
         autoSelectActiveFolder: new vscode.EventEmitter<boolean>(),
         defaultActiveFolder: new vscode.EventEmitter<string | null>(),
@@ -672,6 +693,9 @@ export class ConfigurationReader implements vscode.Disposable {
         postRunCoverageTarget: new vscode.EventEmitter<string | null>(),
         coverageInfoFiles: new vscode.EventEmitter<string[]>(),
         useFolderPropertyInBuildTargetDropdown: new vscode.EventEmitter<boolean>()
+        customTasks: new vscode.EventEmitter<{ [key: string]: string | { [key: string]: { [key: string]: string} }}>(),
+        debugConfigName: new vscode.EventEmitter<string>(),
+        defaultLaunchTarget: new vscode.EventEmitter<string>()
     };
 
     /**
