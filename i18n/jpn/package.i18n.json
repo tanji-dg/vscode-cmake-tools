@@ -257,7 +257,7 @@
 	"cmake-tools.debugger.label": "CMake デバッガー",
 	"cmake-tools.configuration.cmake.customTasks.description": "cmakeの動作に併せて実行されるタスクを指定します。",
 	"cmake-tools.configuration.cmake.debugConfigName.description": "指定した名称の構成でデバッグします。",
-	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "既定の起動/デバッグターゲットを指定します。"
+	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "既定の起動/デバッグターゲットを指定します。",
 	"cmake-tools.command.cmake.appendBuildDirectoryToWorkspace.title": "現在のワークスペースにビルド ディレクトリを追加する",
 	"cmake-tools.command.workbench.action.tasks.configureTaskRunner.title": "タスクの構成",
 	"cmake-tools.command.workbench.action.tasks.runTask.title": "タスクの実行"

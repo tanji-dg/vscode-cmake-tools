@@ -8,6 +8,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
+                "/home/node/cmake_sample/node.code-workspace",
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ],
             "sourceMaps": true,
