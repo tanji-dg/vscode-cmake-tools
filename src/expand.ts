@@ -9,6 +9,8 @@ import { replaceAll, fixPaths, errorToString } from '@cmt/util';
 import * as nls from 'vscode-nls';
 import { EnvironmentWithNull, EnvironmentUtils } from '@cmt/environmentVariables';
 import * as matchAll from 'string.prototype.matchall';
+// Import the CMake driver manager
+import { getCMakeDriverForFolder } from '@cmt/drivers/driver-manager';
 
 nls.config({ messageFormat: nls.MessageFormat.bundle, bundleFormat: nls.BundleFormat.standalone })();
 const localize: nls.LocalizeFunc = nls.loadMessageBundle();
@@ -103,6 +105,10 @@ export interface ExpansionOptions {
      * Support commands by default
      */
     doNotSupportCommands?: boolean;
+    /**
+     * WorkspaceFolder for cmake cache variable expansion
+     */
+    cmakeWorkspaceFolder?: vscode.WorkspaceFolder;
 }
 
 export interface ExpansionErrorHandler {
@@ -249,6 +255,40 @@ async function expandStringHelper(input: string, opts: ExpansionOptions, errorHa
             const varName = mat[1];
             const replacement = variants[varName] || '';
             subs.set(full, replacement);
+        }
+    }
+
+    // Handle ${cmake:VAR} expansions
+    if (opts.cmakeWorkspaceFolder) {
+        const cmakeRegex = RegExp(`\\$\\{cmake:(${varValueRegexp})\\}`, "g");
+        for (const mat of matchAll(input, cmakeRegex)) {
+            expansionOccurred = true;
+            const full = mat[0];
+            const varContent = mat[1];
+            // 変数名とデフォルト値を分離
+            const colonPos = varContent.indexOf(':');
+            const varName = colonPos >= 0 ? varContent.substring(0, colonPos) : varContent;
+            const defaultValue = colonPos >= 0 ? varContent.substring(colonPos + 1) : undefined;
+
+            // Get the driver instance for this workspace folder
+            const driver = getCMakeDriverForFolder(opts.cmakeWorkspaceFolder);
+            if (!driver) {
+                const replacement = defaultValue !== undefined ? defaultValue : `<undefined:${varName}>`;
+                subs.set(full, replacement);
+                log.debug(localize('cmake.variable.undefined', 'CMake variable {0} is undefined, using {1}', varName, replacement));
+                continue;
+            }
+
+            // Access the cache entry and get its value
+            const entry = driver.cmakeCacheEntries.get(varName);
+            if (entry) {
+                subs.set(full, String(entry.value));
+                log.debug(localize('cmake.variable.expanded', 'Expanded CMake variable {0} to {1}', varName, String(entry.value)));
+            } else {
+                const replacement = defaultValue !== undefined ? defaultValue : `<undefined:${varName}>`;
+                subs.set(full, replacement);
+                log.debug(localize('cmake.variable.undefined', 'CMake variable {0} is undefined, using {1}', varName, replacement));
+            }
         }
     }
 

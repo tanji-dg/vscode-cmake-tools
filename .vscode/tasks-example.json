@@ -1,0 +1,56 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build with CMake Variables",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build", 
+                "${cmake:CMAKE_BINARY_DIR:build}",
+                "--config", 
+                "${cmake:CMAKE_BUILD_TYPE:Debug}",
+                "--target",
+                "${cmake:CMAKE_PROJECT_NAME}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Run Tests with CMake Variables",
+            "type": "shell",
+            "command": "ctest",
+            "args": [
+                "--test-dir",
+                "${cmake:CMAKE_BINARY_DIR:build}",
+                "--output-on-failure",
+                "--build-config",
+                "${cmake:CMAKE_BUILD_TYPE:Debug}"
+            ],
+            "group": "test",
+            "presentation": {
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "Custom Script with CMake Variables",
+            "type": "shell",
+            "command": "${workspaceFolder}/scripts/deploy.sh",
+            "args": [
+                "--binary",
+                "${cmake:CMAKE_BINARY_DIR}/bin/${cmake:CMAKE_PROJECT_NAME}",
+                "--target-dir",
+                "${cmake:CMAKE_INSTALL_PREFIX:/usr/local}/bin",
+                "--config",
+                "${cmake:CMAKE_BUILD_TYPE}"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}

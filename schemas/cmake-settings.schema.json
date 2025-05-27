@@ -1,0 +1,35 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "cmake.configureSettings": {
+            "type": "object",
+            "patternProperties": {
+                "^.*$": {
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "description": "キャッシュ変数の値（${cmake:VAR} の展開に対応）"
+                        },
+                        {
+                            "type": "boolean",
+                            "description": "ブール値としてのキャッシュ変数"
+                        },
+                        {
+                            "type": "number",
+                            "description": "数値としてのキャッシュ変数"
+                        },
+                        {
+                            "type": "array",
+                            "description": "配列としてのキャッシュ変数",
+                            "items": {
+                                "type": ["string", "number", "boolean"]
+                            }
+                        }
+                    ]
+                }
+            },
+            "description": "CMake のキャッシュ変数の定義。${cmake:VAR} 形式の変数展開をサポート。"
+        }
+    }
+}
