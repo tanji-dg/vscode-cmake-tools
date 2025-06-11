@@ -1880,7 +1880,7 @@ export class ExtensionManager implements vscode.Disposable {
     }
 
     openSettings() {
-        void vscode.commands.executeCommand('workbench.action.openSettings', '@ext:ms-vscode.cmake-tools');
+        void vscode.commands.executeCommand('workbench.action.openSettings', '@ext:ms-vscode.cmake-tools-dg');
     }
 
     async viewLog() {
