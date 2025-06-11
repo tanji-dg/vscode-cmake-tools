@@ -1267,6 +1267,11 @@ export class CMakeProject {
             this.activeVariant.set(this.variantManager.activeVariantOptions.short);
         }
 
+        // Restore the debug target
+        const defaultLaunchTarget = this.workspaceContext.config.defaultLaunchTarget || '';
+        this._launchTargetName.set(this.workspaceContext.state.getLaunchTargetName(this.folderName, this.isMultiProjectFolder) || defaultLaunchTarget);
+        await this.workspaceContext.state.setLaunchTargetName(this.folderName, this._launchTargetName.value, this.isMultiProjectFolder);
+
         // Listen for the variant to change
         this.variantManager.onActiveVariantChanged(() => {
             log.debug(localize('active.build.variant.changed', 'Active build variant changed'));
