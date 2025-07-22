@@ -8,7 +8,9 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "/home/node/cmake_sample/node.code-workspace",
+                //"d:\\git\\sysu-gitlab\\sf_loireagfw.master\\Project\\01_Monte\\Build\\All\\.vscode\\workspace.code-workspace",
+                "d:\\git\\test_proj",
+                //"/home/node/cmake_sample/node.code-workspace",
                 "--extensionDevelopmentPath=${workspaceFolder}"
             ],
             "sourceMaps": true,
@@ -18,7 +20,8 @@
             "env": {
                 "CMT_DEVRUN": "1"
             },
-            "preLaunchTask": "build-with-webpack-watch",
+            //"preLaunchTask": "build-with-webpack-watch",
+            "preLaunchTask": "${defaultBuildTask}",
             "smartStep": false
         },
         {
