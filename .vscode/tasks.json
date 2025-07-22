@@ -53,7 +53,10 @@
         },
         {
             "label": "Compile",
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "isBackground": false,
             "type": "shell",
             "command": "yarn",
@@ -61,6 +64,16 @@
                 "run",
                 "compile"
             ]
+        },
+        {
+            "label": "no-op",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "type": "shell",
+            "command": "echo 0",
+            "problemMatcher": []
         },
     ]
 }
