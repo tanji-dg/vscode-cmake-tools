@@ -1,0 +1,11 @@
+英語で考え、日本語で出力する。
+思考状況は日本語で出力する。
+
+次のタスクを行う
+
+- git fetch upstreamを実行
+- upstream/mainブランチに変更がなければ終了
+- dg/rebase/YYMMDDのフォーマットでブランチを作成
+- git rebase upstream/mainを行い、package-lock.json以外は、コンフリクトを修正し、完遂する。
+- すべてのパッケージを作成
+- 新たに生成したパッケージを表示
