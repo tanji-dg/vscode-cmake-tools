@@ -16,14 +16,14 @@ export function run(): Promise<void> {
     const testsRoot = __dirname;
 
     return new Promise((c, e) => {
-        glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
+        glob('**/**.test.js', { cwd: testsRoot }, (err: Error | null, files: string[]) => {
             if (err) {
                 return e(err);
             }
 
             // Add files to the test suite
             const regex = process.env.TEST_FILTER ? new RegExp(process.env.TEST_FILTER) : /.*/;
-            files.forEach(f => {
+            files.forEach((f: string) => {
                 if (regex.test(f)) {
                     mocha.addFile(path.resolve(testsRoot, f));
                 }
