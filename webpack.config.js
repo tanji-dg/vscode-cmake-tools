@@ -8,6 +8,7 @@
 'use strict';
 
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -45,7 +46,8 @@ const config = {
                 options: {
                     compilerOptions: {
                         "sourceMap": true,
-                    }
+                    },
+                    transpileOnly: true, // 型チェックを無効にしてビルド速度向上
                 }
             }]
         },{
@@ -54,7 +56,25 @@ const config = {
         }]
     },
     optimization: {
-        minimize: false
+        minimize: true,
+        minimizer: [new TerserPlugin({
+            terserOptions: {
+                compress: {
+                    drop_console: false, // VSCode拡張ではconsoleログを残す
+                    drop_debugger: true,
+                    pure_funcs: ['console.debug'], // debug文のみ削除
+                },
+                mangle: {
+                    reserved: ['vscode'], // vscode変数名を保護
+                },
+                format: {
+                    comments: false, // コメントを削除
+                },
+            },
+            extractComments: false, // ライセンスコメントファイルを生成しない
+        })],
+        usedExports: true,
+        sideEffects: false,
     },
     stats: {
         warnings: false
@@ -71,6 +91,15 @@ module.exports = (/** @type {any} */ env) => {
                 base: __dirname
             }
         })
+    }
+
+    // プロダクションビルド時の最適化
+    if (env.production) {
+        config.mode = 'production';
+        config.devtool = false; // source mapを無効にしてサイズ削減
+        config.optimization.minimize = true;
+    } else {
+        config.mode = 'development';
     }
 
     return config;

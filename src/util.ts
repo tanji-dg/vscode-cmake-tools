@@ -1327,7 +1327,7 @@ export async function globForFileName(fileName: string, depth: number, cwd: stri
  */
 function globWrapper(globPattern: string, cwd: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-        glob(globPattern, { cwd }, (err, files) => {
+        glob(globPattern, { cwd }, (err: Error | null, files: string[]) => {
             if (err) {
                 return reject(false);
             }
