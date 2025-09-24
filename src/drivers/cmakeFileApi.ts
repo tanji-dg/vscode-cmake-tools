@@ -17,6 +17,7 @@ import {
 } from '@cmt/drivers/codeModel';
 import * as logging from '@cmt/logging';
 import { fs } from '@cmt/pr';
+import { Stats } from 'fs';  // 直接fsからインポート
 import * as path from 'path';
 import * as nls from 'vscode-nls';
 import rollbar from '@cmt/rollbar';
@@ -243,7 +244,17 @@ const log = logging.createLogger('cmakefileapi-parser');
  * Attempt to read from a file path. Log a message if it's not readable.
  */
 async function tryReadFile(file: string): Promise<string | undefined> {
-    const fileInfo = await fs.stat(file);
+    let fileInfo: Stats;
+    try {
+        fileInfo = await fs.stat(file);
+    } catch (error: any) {
+        if (error.code === 'ENOENT') {
+            log.error(`File not found: ${file}`);
+            return undefined;
+        } else {
+            throw error;
+        }
+    }
     if (fileInfo.isFile()) {
         return fs.readFile(file);
     } else {
