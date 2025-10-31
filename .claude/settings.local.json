@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(yarn compile-production)",
+      "Bash(yarn install)",
+      "Bash(cat:*)",
+      "Bash(git checkout:*)",
+      "Bash(git stash:*)",
+      "Bash(yarn run translations-generate)",
+      "Bash(yarn add:*)",
+      "Bash(yarn remove:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
