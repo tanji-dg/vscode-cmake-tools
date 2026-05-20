@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "单击以更改活动包预设",
 	"no.package.preset.selected": "未选择包预设",
 	"click.to.change.workflow.preset.tooltip": "单击以更改活动的工作流预设",
-	"no.workflow.preset.selected": "未选择工作流预设"
+	"no.workflow.preset.selected": "未选择工作流预设",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

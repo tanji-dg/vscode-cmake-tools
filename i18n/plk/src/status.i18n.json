@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "Kliknij, aby zmienić ustawienie wstępne aktywnego pakietu",
 	"no.package.preset.selected": "Nie wybrano ustawień wstępnych pakietu",
 	"click.to.change.workflow.preset.tooltip": "Kliknij, aby zmienić ustawienie wstępne aktywnego przepływu pracy",
-	"no.workflow.preset.selected": "Nie wybrano ustawień wstępnych przepływu pracy"
+	"no.workflow.preset.selected": "Nie wybrano ustawień wstępnych przepływu pracy",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

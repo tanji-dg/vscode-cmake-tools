@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "Щелкните, чтобы изменить активную предустановку пакета",
 	"no.package.preset.selected": "Предустановка пакета не выбрана",
 	"click.to.change.workflow.preset.tooltip": "Щелкните, чтобы изменить активную предустановку рабочего процесса",
-	"no.workflow.preset.selected": "Предустановка рабочего процесса не выбрана"
+	"no.workflow.preset.selected": "Предустановка рабочего процесса не выбрана",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

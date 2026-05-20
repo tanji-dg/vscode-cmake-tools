@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "클릭하여 활성 패키지 사전 설정 변경",
 	"no.package.preset.selected": "선택한 패키지 사전 설정 없음",
 	"click.to.change.workflow.preset.tooltip": "클릭하여 활성 워크플로 사전 설정 변경",
-	"no.workflow.preset.selected": "선택한 워크플로 사전 설정 없음"
+	"no.workflow.preset.selected": "선택한 워크플로 사전 설정 없음",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

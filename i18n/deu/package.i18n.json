@@ -329,5 +329,15 @@
 	"cmake-tools.configuration.cmake.modifyLists.scopeSelection.auto.description": "Den besten Kandidaten automatisch auswählen.",
 	"cmake-tools.configuration.cmake.modifyLists.scopeSelection.ask.description": "Zeigen Sie eine Schnellauswahl mit Optionen aus dem ausgewählten Zielquellbefehlsaufruf an.",
 	"cmake-tools.configuration.cmake.modifyLists.sourceListKeywords.markdownDescription": "Schlüsselwortargumente für benutzerdefinierte Funktionen und Makros, die Listen von Quelldateien einleiten. Wenn diese Option leer gelassen wird, werden alle Argumente berücksichtigt, die nur aus Großbuchstaben und Unterstrichen bestehen. Unterstützt Globmuster.",
-	"update.code.model.for.list.modifier": "Codemodell für automatischen Listendateimodifizierer aktualisieren"
+	"update.code.model.for.list.modifier": "Codemodell für automatischen Listendateimodifizierer aktualisieren",
+	"cmake-tools.command.cmake.stopTarget.title": "Stop",
+	"cmake-tools.configuration.cmake.customTasks.description": "Specifies tasks to be executed in conjunction with cmake operations.",
+	"cmake-tools.configuration.cmake.debugConfigName.description": "Debug with the specified configuration name.",
+	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "Specifies the default launch/debug target.",
+	"cmake-tools.command.cmake.fullCleanConfigure.title": "Delete Build Directory and Reconfigure",
+	"cmake-tools.command.cmake.fullCleanConfigureAll.title": "Delete Build Directory and Reconfigure All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAll.title": "Full Clean Reconfigure All Projects",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuild.title": "Delete Build Directory, Reconfigure and Build",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuildAll.title": "Delete Build Directory, Reconfigure and Build All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAndBuildAll.title": "Full Clean Reconfigure and Build All Projects"
 }

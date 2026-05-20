@@ -329,5 +329,15 @@
 	"cmake-tools.configuration.cmake.modifyLists.scopeSelection.auto.description": "Choisissez automatiquement le meilleur candidat.",
 	"cmake-tools.configuration.cmake.modifyLists.scopeSelection.ask.description": "Présentez une sélection rapide avec des options de l’appel de commande source de la cible sélectionnée.",
 	"cmake-tools.configuration.cmake.modifyLists.sourceListKeywords.markdownDescription": "Arguments de mots-clé pour les fonctions et macros définies par l’utilisateur qui introduisent des listes de fichiers sources. S’ils sont laissés vides, tous les arguments composés uniquement de lettres majuscules et de traits de soulignement seront pris en compte. Prend en charge les modèles glob.",
-	"update.code.model.for.list.modifier": "Mettre à jour le modèle de code pour le modificateur automatique d’un fichier de liste"
+	"update.code.model.for.list.modifier": "Mettre à jour le modèle de code pour le modificateur automatique d’un fichier de liste",
+	"cmake-tools.command.cmake.stopTarget.title": "Stop",
+	"cmake-tools.configuration.cmake.customTasks.description": "Specifies tasks to be executed in conjunction with cmake operations.",
+	"cmake-tools.configuration.cmake.debugConfigName.description": "Debug with the specified configuration name.",
+	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "Specifies the default launch/debug target.",
+	"cmake-tools.command.cmake.fullCleanConfigure.title": "Delete Build Directory and Reconfigure",
+	"cmake-tools.command.cmake.fullCleanConfigureAll.title": "Delete Build Directory and Reconfigure All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAll.title": "Full Clean Reconfigure All Projects",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuild.title": "Delete Build Directory, Reconfigure and Build",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuildAll.title": "Delete Build Directory, Reconfigure and Build All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAndBuildAll.title": "Full Clean Reconfigure and Build All Projects"
 }

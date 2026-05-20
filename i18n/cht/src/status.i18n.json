@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "按一下以變更使用中的封裝預設",
 	"no.package.preset.selected": "未選取封裝預設",
 	"click.to.change.workflow.preset.tooltip": "按一下以變更使用中的工作流程預設",
-	"no.workflow.preset.selected": "未選取任何工作流程預設"
+	"no.workflow.preset.selected": "未選取任何工作流程預設",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

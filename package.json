@@ -2,7 +2,7 @@
   "name": "cmake-tools-dg",
   "displayName": "CMake Tools for Daitogiken",
   "description": "Extended CMake support in Visual Studio Code",
-  "version": "1.21.36",
+  "version": "1.22.28",
   "publisher": "ms-vscode",
   "repository": {
     "type": "git",
@@ -144,16 +144,16 @@
       }
     ],
     "grammars": [
-        {
-            "language": "cmake",
-            "scopeName": "source.cmake",
-            "path": "./syntaxes/CMake.tmLanguage.json"
-        },
-        {
-            "language": "cmake-cache",
-            "scopeName": "source.cmakecache",
-            "path": "./syntaxes/CMakeCache.tmLanguage.json"
-        }
+      {
+        "language": "cmake",
+        "scopeName": "source.cmake",
+        "path": "./syntaxes/CMake.tmLanguage.json"
+      },
+      {
+        "language": "cmake-cache",
+        "scopeName": "source.cmakecache",
+        "path": "./syntaxes/CMakeCache.tmLanguage.json"
+      }
     ],
     "commands": [
       {
@@ -4259,10 +4259,10 @@
           "scope": "resource"
         },
         "cmake.useFolderPropertyInBuildTargetDropdown": {
-            "type": "boolean",
-            "default": false,
-            "description": "%cmake-tools.configuration.cmake.useFolderPropertyInBuildTargetDropdown.description%",
-            "scope": "resource"
+          "type": "boolean",
+          "default": false,
+          "description": "%cmake-tools.configuration.cmake.useFolderPropertyInBuildTargetDropdown.description%",
+          "scope": "resource"
         },
 "cmake.setBuildTargetSameAsLaunchTarget": {
           "type": "boolean",
@@ -4544,6 +4544,7 @@
     "@types/js-yaml": "^4.0.0",
     "@types/json5": "~0.0.30",
     "@types/lodash": "4.14.202",
+    "@types/minimatch": "5.1.2",
     "@types/mocha": "^10.0.10",
     "@types/node": "^20.14.2",
     "@types/rimraf": "^3.0.0",

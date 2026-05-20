@@ -198,5 +198,13 @@
 	"cpack.support": "Obsługa pakietu CPack",
 	"select.additional.options": "Wybierz opcje dodatkowe",
 	"select.cpp.files": "Wybierz elementy docelowe do uwzględnienia w pliku CMakeLists.txt",
-	"create.file.failed": "Nie można utworzyć nowego pliku {0}. Dodaj element docelowy do pliku CMakeLists.txt."
+	"create.file.failed": "Nie można utworzyć nowego pliku {0}. Dodaj element docelowy do pliku CMakeLists.txt.",
+	"app.name": "Application",
+	"app.path": "Default application on target.",
+	"executing.task": "Executing {0} task {1} on {2}",
+	"execute.custom.tasks.with.build": "Executing custom tasks with build: {0}",
+	"no.custom.tasks": "No custom tasks",
+	"executing.task.with.build": "Executing task {0} on {1}",
+	"debug.configuration.debugConfigName": "Debug configuration: {0} {1}",
+	"no.custom.task": "Task not found: {0}"
 }

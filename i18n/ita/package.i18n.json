@@ -329,5 +329,15 @@
 	"cmake-tools.configuration.cmake.modifyLists.scopeSelection.auto.description": "Sceglie automaticamente il candidato migliore.",
 	"cmake-tools.configuration.cmake.modifyLists.scopeSelection.ask.description": "Presenta una selezione rapida con le opzioni relative alla chiamata del comando di origine di destinazione selezionata.",
 	"cmake-tools.configuration.cmake.modifyLists.sourceListKeywords.markdownDescription": "Argomenti di parole chiave per macro e funzioni definite dall'utente che introducono elenchi di file di origine. Se l'elenco viene lasciato vuoto, verranno considerati tutti gli argomenti composti esclusivamente da lettere maiuscole e trattini bassi. Supporta criteri globali.",
-	"update.code.model.for.list.modifier": "Aggiornare il modello di codice per il modificatore automatico dei file di elenco"
+	"update.code.model.for.list.modifier": "Aggiornare il modello di codice per il modificatore automatico dei file di elenco",
+	"cmake-tools.command.cmake.stopTarget.title": "Stop",
+	"cmake-tools.configuration.cmake.customTasks.description": "Specifies tasks to be executed in conjunction with cmake operations.",
+	"cmake-tools.configuration.cmake.debugConfigName.description": "Debug with the specified configuration name.",
+	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "Specifies the default launch/debug target.",
+	"cmake-tools.command.cmake.fullCleanConfigure.title": "Delete Build Directory and Reconfigure",
+	"cmake-tools.command.cmake.fullCleanConfigureAll.title": "Delete Build Directory and Reconfigure All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAll.title": "Full Clean Reconfigure All Projects",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuild.title": "Delete Build Directory, Reconfigure and Build",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuildAll.title": "Delete Build Directory, Reconfigure and Build All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAndBuildAll.title": "Full Clean Reconfigure and Build All Projects"
 }

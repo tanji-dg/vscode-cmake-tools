@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "Etkin paket ön ayarını değiştirmek için tıklayın",
 	"no.package.preset.selected": "Paket Ön Ayarı Seçilmedi",
 	"click.to.change.workflow.preset.tooltip": "Etkin iş akışı ön ayarını değiştirmek için tıklayın",
-	"no.workflow.preset.selected": "İş Akışı Ön Ayarı Seçilmedi"
+	"no.workflow.preset.selected": "İş Akışı Ön Ayarı Seçilmedi",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

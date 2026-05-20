@@ -329,5 +329,15 @@
 	"cmake-tools.configuration.cmake.modifyLists.scopeSelection.auto.description": "Automaticky zvolit nejlepšího kandidáta",
 	"cmake-tools.configuration.cmake.modifyLists.scopeSelection.ask.description": "Umožňuje zobrazit nabídku rychlého výběru s možnostmi z vybraného volání příkazu pracujícího se zdrojovými soubory cíle.",
 	"cmake-tools.configuration.cmake.modifyLists.sourceListKeywords.markdownDescription": "Argumenty klíčových slov u uživatelem definovaných funkcí a maker, které zavádějí seznamy zdrojových souborů Pokud zůstane prázdné, budou zohledněny všechny argumenty složené pouze z velkých písmen a podtržítek. Podporuje vzory glob.",
-	"update.code.model.for.list.modifier": "Aktualizovat model kódu pro automatický modifikátor souborů seznamu"
+	"update.code.model.for.list.modifier": "Aktualizovat model kódu pro automatický modifikátor souborů seznamu",
+	"cmake-tools.command.cmake.stopTarget.title": "Stop",
+	"cmake-tools.configuration.cmake.customTasks.description": "Specifies tasks to be executed in conjunction with cmake operations.",
+	"cmake-tools.configuration.cmake.debugConfigName.description": "Debug with the specified configuration name.",
+	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "Specifies the default launch/debug target.",
+	"cmake-tools.command.cmake.fullCleanConfigure.title": "Delete Build Directory and Reconfigure",
+	"cmake-tools.command.cmake.fullCleanConfigureAll.title": "Delete Build Directory and Reconfigure All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAll.title": "Full Clean Reconfigure All Projects",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuild.title": "Delete Build Directory, Reconfigure and Build",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuildAll.title": "Delete Build Directory, Reconfigure and Build All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAndBuildAll.title": "Full Clean Reconfigure and Build All Projects"
 }
