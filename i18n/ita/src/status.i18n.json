@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "Fare clic per modificare il set di impostazioni del pacchetto attivo",
 	"no.package.preset.selected": "Nessun set di impostazioni del pacchetto selezionato",
 	"click.to.change.workflow.preset.tooltip": "Fare clic per cambiare il set di impostazioni del flusso di lavoro attivo",
-	"no.workflow.preset.selected": "Nessun set di impostazioni del flusso di lavoro selezionato"
+	"no.workflow.preset.selected": "Nessun set di impostazioni del flusso di lavoro selezionato",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

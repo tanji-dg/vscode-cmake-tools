@@ -190,5 +190,12 @@
 	"cpack.support": "CPack サポート",
 	"select.additional.options": "その他のオプションを選択する",
 	"select.cpp.files": "CMakeLists.txt ファイルに含めるターゲットを選択します",
-	"create.file.failed": "新しい {0} ファイルを作成できませんでした。ターゲットを CMakeLists.txt に追加する。"
+	"create.file.failed": "新しい {0} ファイルを作成できませんでした。ターゲットを CMakeLists.txt に追加する。",
+	"app.name": "アプリケーション",
+	"app.path": "ターゲット上のデフォルトアプリケーション。",
+	"executing.task": "{2} で タスク {1} ({0}) を実行中",
+	"execute.custom.tasks.with.build": "ビルドでカスタムタスクを実行中: {0}",
+	"no.custom.tasks": "カスタムタスクはありません",
+	"executing.task.with.build": "タスク {0} を {1} で実行中",
+	"debug.configuration.debugConfigName": "デバッグ構成: {0} {1}"
 }

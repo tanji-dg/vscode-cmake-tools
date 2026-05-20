@@ -188,5 +188,13 @@
 	"cpack.support": "Prise en charge de CPack",
 	"select.additional.options": "Sélectionnez des options supplémentaires",
 	"select.cpp.files": "Sélectionnez les cibles à inclure dans le fichier CMakeLists.txt",
-	"create.file.failed": "Échec de la création d’un nouveau fichier {0}. Ajoutez une cible à CMakeLists.txt."
+	"create.file.failed": "Échec de la création d’un nouveau fichier {0}. Ajoutez une cible à CMakeLists.txt.",
+	"app.name": "Application",
+	"app.path": "Default application on target.",
+	"executing.task": "Executing {0} task {1} on {2}",
+	"execute.custom.tasks.with.build": "Executing custom tasks with build: {0}",
+	"no.custom.tasks": "No custom tasks",
+	"executing.task.with.build": "Executing task {0} on {1}",
+	"debug.configuration.debugConfigName": "Debug configuration: {0} {1}",
+	"no.custom.task": "Task not found: {0}"
 }

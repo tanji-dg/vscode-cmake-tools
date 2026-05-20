@@ -290,5 +290,11 @@
 	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "既定の起動/デバッグターゲットを指定します。",
 	"cmake-tools.command.cmake.appendBuildDirectoryToWorkspace.title": "現在のワークスペースにビルド ディレクトリを追加する",
 	"cmake-tools.command.workbench.action.tasks.configureTaskRunner.title": "タスクの構成",
-	"cmake-tools.command.workbench.action.tasks.runTask.title": "タスクの実行"
+	"cmake-tools.command.workbench.action.tasks.runTask.title": "タスクの実行",
+	"cmake-tools.command.cmake.fullCleanConfigure.title": "ビルドディレクトリを削除して再構成",
+	"cmake-tools.command.cmake.fullCleanConfigureAll.title": "ビルドディレクトリを削除して全プロジェクトを再構成",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAll.title": "全プロジェクトをフルクリーン再構成",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuild.title": "ビルドディレクトリを削除して再構成・ビルド",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuildAll.title": "ビルドディレクトリを削除して全プロジェクトを再構成・ビルド",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAndBuildAll.title": "全プロジェクトをフルクリーン再構成・ビルド"
 }

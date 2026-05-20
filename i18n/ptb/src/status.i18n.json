@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "Clique para alterar a predefinição de pacote ativa",
 	"no.package.preset.selected": "Nenhuma Predefinição de Pacote Selecionada",
 	"click.to.change.workflow.preset.tooltip": "Clique para alterar a predefinição de fluxo de trabalho ativa",
-	"no.workflow.preset.selected": "Nenhuma Predefinição de Fluxo de Trabalho Selecionada"
+	"no.workflow.preset.selected": "Nenhuma Predefinição de Fluxo de Trabalho Selecionada",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

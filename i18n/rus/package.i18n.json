@@ -286,5 +286,15 @@
 	"cmake-tools.debugger.label": "Отладчик CMake",
 	"cmake-tools.command.cmake.appendBuildDirectoryToWorkspace.title": "Добавить каталог сборки в текущую рабочую область",
 	"cmake-tools.command.workbench.action.tasks.configureTaskRunner.title": "Настроить задачу",
-	"cmake-tools.command.workbench.action.tasks.runTask.title": "Выполнить задачу"
+	"cmake-tools.command.workbench.action.tasks.runTask.title": "Выполнить задачу",
+	"cmake-tools.command.cmake.stopTarget.title": "Stop",
+	"cmake-tools.configuration.cmake.customTasks.description": "Specifies tasks to be executed in conjunction with cmake operations.",
+	"cmake-tools.configuration.cmake.debugConfigName.description": "Debug with the specified configuration name.",
+	"cmake-tools.configuration.cmake.defaultLaunchTarget.description": "Specifies the default launch/debug target.",
+	"cmake-tools.command.cmake.fullCleanConfigure.title": "Delete Build Directory and Reconfigure",
+	"cmake-tools.command.cmake.fullCleanConfigureAll.title": "Delete Build Directory and Reconfigure All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAll.title": "Full Clean Reconfigure All Projects",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuild.title": "Delete Build Directory, Reconfigure and Build",
+	"cmake-tools.command.cmake.fullCleanConfigureAndBuildAll.title": "Delete Build Directory, Reconfigure and Build All Projects",
+	"cmake-tools.command.cmake.outline.fullCleanConfigureAndBuildAll.title": "Full Clean Reconfigure and Build All Projects"
 }

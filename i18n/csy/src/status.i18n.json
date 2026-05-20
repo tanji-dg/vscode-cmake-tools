@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "Kliknutím změníte aktivní předvolbu balíčku.",
 	"no.package.preset.selected": "Není vybraná žádná předvolba balíčku.",
 	"click.to.change.workflow.preset.tooltip": "Kliknutím změníte aktivní předvolbu pracovního postupu.",
-	"no.workflow.preset.selected": "Není vybraná žádná předvolba pracovního postupu."
+	"no.workflow.preset.selected": "Není vybraná žádná předvolba pracovního postupu.",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

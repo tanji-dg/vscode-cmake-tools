@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "Hacer clic para cambiar el valor preestablecido de paquete activo",
 	"no.package.preset.selected": "No se ha seleccionado ningún valor preestablecido de paquete",
 	"click.to.change.workflow.preset.tooltip": "Hacer clic para cambiar el valor preestablecido de flujo de trabajo activo",
-	"no.workflow.preset.selected": "No se ha seleccionado ningún valor preestablecido de flujo de trabajo"
+	"no.workflow.preset.selected": "No se ha seleccionado ningún valor preestablecido de flujo de trabajo",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

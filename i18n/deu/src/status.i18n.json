@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "Klicken Sie, um die aktive Paketvoreinstellung zu ändern",
 	"no.package.preset.selected": "Keine Paketvoreinstellung ausgewählt",
 	"click.to.change.workflow.preset.tooltip": "Klicken Sie, um die aktive Workflowvoreinstellung zu ändern",
-	"no.workflow.preset.selected": "Keine Workflowvoreinstellung ausgewählt"
+	"no.workflow.preset.selected": "Keine Workflowvoreinstellung ausgewählt",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }

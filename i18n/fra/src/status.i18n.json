@@ -33,5 +33,8 @@
 	"click.to.change.package.preset.tooltip": "Cliquez pour modifier la présélection de package active",
 	"no.package.preset.selected": "Aucune présélection de package sélectionnée",
 	"click.to.change.workflow.preset.tooltip": "Cliquez pour modifier la présélection de workflow active",
-	"no.workflow.preset.selected": "Aucune présélection de workflow sélectionnée"
+	"no.workflow.preset.selected": "Aucune présélection de workflow sélectionnée",
+	"stop.tooltip": "Stop the selected target",
+	"rebuild.tooltip": "Rebuild the selected target",
+	"rebuild": "Rebuild"
 }
