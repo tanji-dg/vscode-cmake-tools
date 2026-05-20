@@ -1003,22 +1003,26 @@ export async function tryApplyVsDevEnv(preset: ConfigurePreset, workspaceFolder:
         if (useVsDeveloperEnvironmentMode === "auto") {
             const { compilerName, generatorIsNinja } = getVsDevEnvAutoDetectionInfo(preset);
             if (compilerName || generatorIsNinja) {
-                // find where.exe using process.env since we're on windows.
-                let whereExecutable;
-                // assume in this call that it exists
-                const whereOutput = await execute('where.exe', ['where.exe'], null, {
-                    environment: process.env,
-                    silent: true,
-                    encoding: 'utf-8',
-                    shell: true
-                }).result;
+                // find where.exe using the known System32 path on Windows.
+                let whereExecutable: string | undefined;
+                const sys32Path = path.join(process.env.WINDIR || process.env.windir || 'C:\\Windows', 'System32');
+                const sys32Where = path.join(sys32Path, 'where.exe');
+                if (await util.checkFileExists(sys32Where)) {
+                    whereExecutable = sys32Where;
+                } else {
+                    // Fallback: try to locate where.exe via itself
+                    const whereOutput = await execute('where.exe', ['where.exe'], null, {
+                        environment: process.env,
+                        silent: true,
+                        encoding: 'utf-8',
+                        shell: true
+                    }).result;
 
-                // now we have a valid where.exe
-
-                if (whereOutput.stdout) {
-                    const locations = whereOutput.stdout.split('\r\n');
-                    if (locations.length > 0) {
-                        whereExecutable = locations[0];
+                    if (whereOutput.stdout) {
+                        const locations = whereOutput.stdout.split('\r\n');
+                        if (locations.length > 0) {
+                            whereExecutable = locations[0];
+                        }
                     }
                 }
 
