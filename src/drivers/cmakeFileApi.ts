@@ -574,7 +574,7 @@ export async function loadProject(rootPaths: CodeModelKind.PathInfo, replyPath: 
             ? path.join(rootPaths.source, configuration.directories[project.directoryIndexes[0]].source)
             : rootPaths.source
     };
-    const targets = await Promise.all((project.targetIndexes || []).map(targetIndex => loadCodeModelTarget(rootPaths, path.join(replyPath, configuration.targets[targetIndex].jsonFile))));
+    const targets = (await Promise.all((project.targetIndexes || []).map(targetIndex => loadCodeModelTarget(rootPaths, path.join(replyPath, configuration.targets[targetIndex].jsonFile))))).filter(t => t !== null) as CodeModelTarget[];
 
     return { name: project.name, targets, sourceDirectory: projectPaths.source } as CodeModelProject;
 }
