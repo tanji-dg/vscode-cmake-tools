@@ -190,7 +190,9 @@ export function getWindowsCodepage() {
  */
 async function getWindowsActiveCodePage(): Promise<string> {
     const proc = await import('@cmt/proc');
-    const chcpResult = await proc.execute('chcp', []).result;
+    const path = await import('path');
+    const sys32Path = path.join(process.env.WINDIR || process.env.windir || 'C:\\Windows', 'System32');
+    const chcpResult = await proc.execute(path.join(sys32Path, 'cmd.exe'), ['/c', path.join(sys32Path, 'chcp.com')]).result;
     if (chcpResult.retc !== 0) {
         log.error(localize('failed.to.execute', 'Failed to execute {0}', "chcp"), chcpResult.stderr);
         return 'utf-8';
